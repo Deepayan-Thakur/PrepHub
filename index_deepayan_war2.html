@@ -1,0 +1,3741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepayanOS · Career HQ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════ DESIGN TOKENS ═══════════════════════════════ */
+        :root {
+            --ink: #08090d;
+            --base: #0d0f17;
+            --lift: #131520;
+            --raise: #191c2a;
+            --float: #1f2235;
+            --rim: rgba(255, 255, 255, 0.06);
+            --rim2: rgba(255, 255, 255, 0.11);
+            --rim3: rgba(255, 255, 255, 0.18);
+            --snow: #e9eaf2;
+            --fog: #7b7e9a;
+            --ghost: #4a4d62;
+
+            /* Palette — radial, not gradient everywhere */
+            --lime: #b8f241;
+            --lime-dim: #7aad1e;
+            --lime-glow: rgba(184, 242, 65, 0.18);
+            --lime-rim: rgba(184, 242, 65, 0.35);
+
+            --volt: #d4ff3d;
+            --volt-dim: rgba(212, 255, 61, 0.15);
+
+            --indigo: #5b6ef5;
+            --indigo-dim: rgba(91, 110, 245, 0.18);
+            --indigo-rim: rgba(91, 110, 245, 0.38);
+
+            --sky: #38bdf8;
+            --sky-dim: rgba(56, 189, 248, 0.15);
+
+            --amber: #f59e0b;
+            --amber-dim: rgba(245, 158, 11, 0.18);
+            --amber-rim: rgba(245, 158, 11, 0.4);
+
+            --rose: #fb7185;
+            --rose-dim: rgba(251, 113, 133, 0.18);
+
+            --teal: #2dd4bf;
+            --teal-dim: rgba(45, 212, 191, 0.15);
+
+            --r: 18px;
+            --r-sm: 12px;
+            --r-xs: 8px;
+            --r-pill: 999px;
+        }
+
+        /* ═══════════════════════════════ RESET & BASE ═══════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 15px;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--base);
+            color: var(--snow);
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* Radial ambient lights — NOT gradient bars */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 600px 400px at 10% 15%, rgba(184, 242, 65, 0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 500px 500px at 90% 80%, rgba(91, 110, 245, 0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 400px 300px at 50% 50%, rgba(45, 212, 191, 0.04) 0%, transparent 70%);
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--ghost);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--lime-dim);
+        }
+
+        /* ═══════════════════════════════ AUTH SCREEN ═══════════════════════════════ */
+        #auth-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            background: var(--base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-wrap {
+            width: 420px;
+            max-width: 94vw;
+            animation: riseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .auth-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            color: var(--lime);
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auth-eyebrow::before {
+            content: '';
+            display: block;
+            width: 28px;
+            height: 1px;
+            background: var(--lime);
+        }
+
+        .auth-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--snow);
+            margin-bottom: 10px;
+        }
+
+        .auth-title span {
+            color: var(--lime);
+        }
+
+        .auth-sub {
+            font-size: 0.9rem;
+            color: var(--fog);
+            line-height: 1.65;
+            margin-bottom: 32px;
+        }
+
+        .auth-panel {
+            background: var(--lift);
+            border: 1px solid var(--rim2);
+            border-radius: var(--r);
+            padding: 28px;
+            box-shadow: 0 0 0 1px rgba(184, 242, 65, 0.04), 0 32px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        .field-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--fog);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--base);
+            border: 1px solid var(--rim2);
+            border-radius: var(--r-sm);
+            color: var(--snow);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-bottom: 14px;
+        }
+
+        .auth-input:focus {
+            border-color: var(--lime-rim);
+            box-shadow: 0 0 0 3px var(--lime-glow);
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 13px 24px;
+            background: var(--lime);
+            color: #0a0c10;
+            border: none;
+            border-radius: var(--r-sm);
+            font-family: 'Syne', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+            transition: background 0.15s, transform 0.12s, box-shadow 0.2s;
+            box-shadow: 0 4px 24px var(--lime-glow);
+        }
+
+        .btn-main:hover {
+            background: var(--volt);
+            box-shadow: 0 6px 32px rgba(184, 242, 65, 0.35);
+        }
+
+        .btn-main:active {
+            transform: scale(0.98);
+        }
+
+        .auth-hint {
+            font-size: 0.78rem;
+            color: var(--ghost);
+            margin-top: 14px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .auth-hint a {
+            color: var(--sky);
+            text-decoration: none;
+        }
+
+        .auth-hint a:hover {
+            text-decoration: underline;
+        }
+
+        #auth-err {
+            font-size: 0.82rem;
+            color: var(--rose);
+            margin-top: 12px;
+            display: none;
+            padding: 10px 14px;
+            background: var(--rose-dim);
+            border-radius: var(--r-xs);
+            border: 1px solid rgba(251, 113, 133, 0.25);
+        }
+
+        /* ═══════════════════════════════ APP SHELL ═══════════════════════════════ */
+        #app {
+            display: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 220px;
+            background: var(--lift);
+            border-right: 1px solid var(--rim);
+            display: flex;
+            flex-direction: column;
+            z-index: 200;
+            overflow-y: auto;
+            padding: 0 0 24px;
+        }
+
+        .sidebar-logo {
+            padding: 22px 20px 20px;
+            border-bottom: 1px solid var(--rim);
+            margin-bottom: 8px;
+        }
+
+        .logo-mark {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--snow);
+            letter-spacing: -0.02em;
+        }
+
+        .logo-mark span {
+            color: var(--lime);
+        }
+
+        .logo-sub {
+            font-size: 0.7rem;
+            color: var(--ghost);
+            margin-top: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.06em;
+        }
+
+        .sidebar-section-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ghost);
+            padding: 14px 20px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 20px;
+            margin: 1px 10px;
+            border-radius: var(--r-xs);
+            cursor: pointer;
+            color: var(--fog);
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.15s;
+            border: none;
+            background: none;
+            text-align: left;
+            width: calc(100% - 20px);
+        }
+
+        .nav-item:hover {
+            background: var(--raise);
+            color: var(--snow);
+        }
+
+        .nav-item.active {
+            background: rgba(184, 242, 65, 0.1);
+            color: var(--lime);
+            border: 1px solid var(--lime-rim);
+        }
+
+        .nav-icon {
+            font-size: 1rem;
+            width: 20px;
+            flex-shrink: 0;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            font-size: 0.65rem;
+            font-weight: 700;
+            background: var(--lime);
+            color: #0a0c10;
+            padding: 2px 6px;
+            border-radius: var(--r-pill);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px 20px;
+            border-top: 1px solid var(--rim);
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .user-avi {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 35%, var(--lime) 0%, var(--lime-dim) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #0a0c10;
+            flex-shrink: 0;
+        }
+
+        .user-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--snow);
+        }
+
+        .user-meta {
+            font-size: 0.7rem;
+            color: var(--ghost);
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 8px;
+            border-radius: var(--r-xs);
+            background: none;
+            border: 1px solid var(--rim2);
+            color: var(--fog);
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-logout:hover {
+            border-color: var(--rose);
+            color: var(--rose);
+            background: var(--rose-dim);
+        }
+
+        /* TOP BAR */
+        .topbar {
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            height: 56px;
+            background: rgba(13, 15, 23, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--rim);
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            gap: 16px;
+            z-index: 100;
+        }
+
+        .topbar-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--snow);
+        }
+
+        .topbar-crumb {
+            color: var(--ghost);
+        }
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-clock {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--fog);
+            background: var(--lift);
+            border: 1px solid var(--rim);
+            border-radius: var(--r-xs);
+            padding: 5px 10px;
+        }
+
+        .topbar-streak {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--amber);
+            background: var(--amber-dim);
+            border: 1px solid var(--amber-rim);
+            padding: 5px 12px;
+            border-radius: var(--r-pill);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .save-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: var(--r-pill);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--lift);
+            border: 1px solid var(--rim);
+            color: var(--fog);
+            transition: all 0.3s;
+        }
+
+        .save-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--lime);
+        }
+
+        .save-dot.pulsing {
+            animation: dotPulse 0.8s ease-in-out infinite;
+            background: var(--amber);
+        }
+
+        @keyframes dotPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.7);
+            }
+        }
+
+        /* MAIN CONTENT */
+        .main {
+            margin-left: 220px;
+            margin-top: 56px;
+            padding: 28px;
+            min-height: calc(100vh - 56px);
+        }
+
+        /* PAGE TRANSITIONS */
+        .page {
+            display: none;
+            animation: riseIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popScale {
+            from {
+                opacity: 0;
+                transform: scale(0.94);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shimmer {
+            from {
+                background-position: -200% center;
+            }
+
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        /* ═══════════════════════════════ COMPONENTS ═══════════════════════════════ */
+
+        /* Cards */
+        .card {
+            background: var(--lift);
+            border: 1px solid var(--rim);
+            border-radius: var(--r);
+            padding: 22px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--rim2);
+            transform: translateY(-1px);
+        }
+
+        .card-accent-lime {
+            border-top: 2px solid var(--lime);
+        }
+
+        .card-accent-indigo {
+            border-top: 2px solid var(--indigo);
+        }
+
+        .card-accent-amber {
+            border-top: 2px solid var(--amber);
+        }
+
+        .card-accent-teal {
+            border-top: 2px solid var(--teal);
+        }
+
+        .card-accent-rose {
+            border-top: 2px solid var(--rose);
+        }
+
+        .card-accent-sky {
+            border-top: 2px solid var(--sky);
+        }
+
+        /* Glow cards */
+        .glow-lime::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--lime-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .glow-indigo::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--indigo-dim) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .glow-amber::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--amber-dim) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .card-kpi-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--fog);
+            margin-bottom: 10px;
+        }
+
+        .card-kpi-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--snow);
+            margin-bottom: 6px;
+        }
+
+        .card-kpi-sub {
+            font-size: 0.8rem;
+            color: var(--fog);
+        }
+
+        /* Progress */
+        .prog-track {
+            height: 5px;
+            background: var(--raise);
+            border-radius: var(--r-pill);
+            overflow: hidden;
+            margin-top: 14px;
+        }
+
+        .prog-fill {
+            height: 100%;
+            border-radius: var(--r-pill);
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .prog-lime {
+            background: var(--lime);
+        }
+
+        .prog-indigo {
+            background: var(--indigo);
+        }
+
+        .prog-amber {
+            background: var(--amber);
+        }
+
+        .prog-teal {
+            background: var(--teal);
+        }
+
+        .prog-rose {
+            background: var(--rose);
+        }
+
+        /* Tags / Badges */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: var(--r-pill);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .tag-lime {
+            background: rgba(184, 242, 65, 0.12);
+            color: var(--lime);
+            border: 1px solid var(--lime-rim);
+        }
+
+        .tag-indigo {
+            background: var(--indigo-dim);
+            color: #8b98fc;
+            border: 1px solid var(--indigo-rim);
+        }
+
+        .tag-amber {
+            background: var(--amber-dim);
+            color: var(--amber);
+            border: 1px solid var(--amber-rim);
+        }
+
+        .tag-teal {
+            background: var(--teal-dim);
+            color: var(--teal);
+        }
+
+        .tag-rose {
+            background: var(--rose-dim);
+            color: var(--rose);
+        }
+
+        .tag-sky {
+            background: var(--sky-dim);
+            color: var(--sky);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 9px 18px;
+            border-radius: var(--r-xs);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 1px solid transparent;
+        }
+
+        .btn-lime {
+            background: var(--lime);
+            color: #0a0c10;
+            border-color: var(--lime);
+        }
+
+        .btn-lime:hover {
+            background: var(--volt);
+            box-shadow: 0 4px 20px var(--lime-glow);
+        }
+
+        .btn-outline {
+            background: none;
+            border-color: var(--rim2);
+            color: var(--fog);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--rim3);
+            color: var(--snow);
+            background: var(--raise);
+        }
+
+        .btn-ghost {
+            background: none;
+            border: none;
+            color: var(--fog);
+        }
+
+        .btn-ghost:hover {
+            color: var(--snow);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.78rem;
+        }
+
+        /* Inputs */
+        .inp {
+            padding: 10px 14px;
+            background: var(--base);
+            border: 1px solid var(--rim2);
+            border-radius: var(--r-sm);
+            color: var(--snow);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .inp:focus {
+            border-color: var(--lime-rim);
+            box-shadow: 0 0 0 3px var(--lime-glow);
+        }
+
+        .inp::placeholder {
+            color: var(--ghost);
+        }
+
+        select.inp {
+            cursor: pointer;
+        }
+
+        /* Section headers */
+        .pg-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--snow);
+            margin-bottom: 4px;
+        }
+
+        .pg-sub {
+            font-size: 0.85rem;
+            color: var(--fog);
+            margin-bottom: 24px;
+        }
+
+        /* Divider */
+        .hr {
+            height: 1px;
+            background: var(--rim);
+            margin: 20px 0;
+        }
+
+        /* Grids */
+        .g2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .g3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .g4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 1200px) {
+            .g4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            .g3,
+            .g2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .g4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ═══════════════════════════════ DASHBOARD ═══════════════════════════════ */
+
+        /* Greeting hero */
+        .hero {
+            background: var(--lift);
+            border: 1px solid var(--rim);
+            border-radius: var(--r);
+            padding: 28px 32px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(184, 242, 65, 0.1) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .hero-greeting {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--snow);
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+
+        .hero-greeting em {
+            color: var(--lime);
+            font-style: normal;
+        }
+
+        .hero-date {
+            font-size: 0.85rem;
+            color: var(--fog);
+            margin-bottom: 16px;
+        }
+
+        .hero-counters {
+            display: flex;
+            gap: 24px;
+        }
+
+        .hero-counter-label {
+            font-size: 0.72rem;
+            color: var(--fog);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-counter-val {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--lime);
+        }
+
+        .hero-counter-unit {
+            font-size: 0.78rem;
+            color: var(--fog);
+        }
+
+        /* Countdown ring */
+        .countdown-ring-wrap {
+            position: relative;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .countdown-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .ring-bg {
+            fill: none;
+            stroke: var(--raise);
+            stroke-width: 6;
+        }
+
+        .ring-fill {
+            fill: none;
+            stroke: var(--lime);
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .ring-center {
+            position: absolute;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .ring-days {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--lime);
+            display: block;
+            line-height: 1;
+        }
+
+        .ring-label {
+            font-size: 0.65rem;
+            color: var(--fog);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* KPI row */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1100px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dashboard bottom grid */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 1000px) {
+            .dash-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Today tasks */
+        .task-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: var(--r-sm);
+            background: var(--raise);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.15s, opacity 0.2s;
+            border: 1px solid transparent;
+            animation: riseIn 0.3s ease both;
+        }
+
+        .task-row:hover {
+            background: var(--float);
+            border-color: var(--rim);
+        }
+
+        .task-row.done {
+            opacity: 0.45;
+        }
+
+        .task-row.done .t-text {
+            text-decoration: line-through;
+            color: var(--fog);
+        }
+
+        .t-check {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1.5px solid var(--ghost);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.65rem;
+        }
+
+        .task-row.done .t-check {
+            background: var(--lime);
+            border-color: var(--lime);
+            color: #0a0c10;
+            font-weight: 800;
+        }
+
+        .t-text {
+            flex: 1;
+            font-size: 0.88rem;
+        }
+
+        .t-tag {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: var(--r-pill);
+            flex-shrink: 0;
+        }
+
+        .t-dsa {
+            background: rgba(184, 242, 65, 0.12);
+            color: var(--lime);
+        }
+
+        .t-java {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--amber);
+        }
+
+        .t-ssc {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--sky);
+        }
+
+        .t-ai {
+            background: rgba(45, 212, 191, 0.12);
+            color: var(--teal);
+        }
+
+        .t-proj {
+            background: rgba(251, 113, 133, 0.12);
+            color: var(--rose);
+        }
+
+        .t-apt {
+            background: rgba(91, 110, 245, 0.12);
+            color: var(--indigo);
+        }
+
+        .t-del {
+            background: none;
+            border: none;
+            color: var(--ghost);
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 3px 6px;
+            border-radius: 4px;
+            transition: color 0.15s;
+            display: none;
+        }
+
+        .task-row:hover .t-del {
+            display: block;
+        }
+
+        .t-del:hover {
+            color: var(--rose);
+        }
+
+        /* Inline add */
+        .inline-add {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        /* Streak calendar */
+        .streak-cal {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .sc-col {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sc-cell {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 3px;
+            background: var(--raise);
+            cursor: pointer;
+            transition: transform 0.12s;
+            position: relative;
+        }
+
+        .sc-cell:hover {
+            transform: scale(1.4);
+            z-index: 10;
+        }
+
+        .sc-cell.l1 {
+            background: rgba(184, 242, 65, 0.2);
+        }
+
+        .sc-cell.l2 {
+            background: rgba(184, 242, 65, 0.5);
+        }
+
+        .sc-cell.l3 {
+            background: var(--lime);
+        }
+
+        .sc-cell.today-cell {
+            box-shadow: 0 0 0 1.5px var(--amber);
+        }
+
+        /* ═══════════════════════════════ TIMER ═══════════════════════════════ */
+        .timer-card {
+            background: var(--lift);
+            border: 1px solid var(--rim);
+            border-radius: var(--r);
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-card::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(184, 242, 65, 0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .timer-ring-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px 0;
+        }
+
+        .timer-ring-wrap svg {
+            filter: drop-shadow(0 0 12px rgba(184, 242, 65, 0.3));
+        }
+
+        .timer-bg-ring {
+            fill: none;
+            stroke: var(--raise);
+            stroke-width: 8;
+        }
+
+        .timer-prog-ring {
+            fill: none;
+            stroke: var(--lime);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s linear;
+        }
+
+        .timer-prog-ring.break-mode {
+            stroke: var(--sky);
+        }
+
+        .timer-prog-ring.paused {
+            stroke: var(--amber);
+        }
+
+        .timer-center {
+            position: absolute;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .timer-digits {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--snow);
+            display: block;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .timer-mode-label {
+            font-size: 0.7rem;
+            color: var(--fog);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .timer-mode-tabs {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .tmb {
+            padding: 5px 14px;
+            border-radius: var(--r-pill);
+            border: 1px solid var(--rim2);
+            background: none;
+            color: var(--fog);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .tmb.active {
+            border-color: var(--lime-rim);
+            color: var(--lime);
+            background: rgba(184, 242, 65, 0.08);
+        }
+
+        .custom-timer-row {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-timer-inp {
+            width: 56px;
+            padding: 6px 8px;
+            text-align: center;
+            background: var(--base);
+            border: 1px solid var(--rim2);
+            border-radius: var(--r-xs);
+            color: var(--snow);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .custom-timer-inp:focus {
+            border-color: var(--lime-rim);
+        }
+
+        .timer-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 4px;
+        }
+
+        .tmbtn {
+            padding: 10px 22px;
+            border-radius: var(--r-xs);
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid var(--rim2);
+            background: none;
+            color: var(--fog);
+        }
+
+        .tmbtn.primary {
+            background: var(--lime);
+            border-color: var(--lime);
+            color: #0a0c10;
+            box-shadow: 0 4px 16px var(--lime-glow);
+        }
+
+        .tmbtn.primary:hover {
+            background: var(--volt);
+        }
+
+        .tmbtn:hover:not(.primary) {
+            border-color: var(--rim3);
+            color: var(--snow);
+        }
+
+        .pomodoro-log {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            min-height: 24px;
+        }
+
+        .pomo-pip {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--lime);
+            opacity: 0.9;
+            animation: popScale 0.3s ease;
+        }
+
+        .pomo-pip.break-pip {
+            background: var(--sky);
+        }
+
+        /* ═══════════════════════════════ SCHEDULE ═══════════════════════════════ */
+        .sched-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 900px) {
+            .sched-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sched-bank {
+            background: var(--lift);
+            border: 1px solid var(--rim);
+            border-radius: var(--r);
+            padding: 18px;
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+        }
+
+        .sched-bank-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bank-pool {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 80px;
+            padding: 8px;
+            border-radius: var(--r-xs);
+            border: 1px dashed var(--rim2);
+            background: var(--base);
+        }
+
+        .bank-pool.drag-over {
+            border-color: var(--lime-rim);
+            background: rgba(184, 242, 65, 0.04);
+        }
+
+        .bank-chip {
+            padding: 8px 12px;
+            border-radius: var(--r-xs);
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: grab;
+            user-select: none;
+            transition: opacity 0.2s, transform 0.1s;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bank-chip:active {
+            cursor: grabbing;
+            transform: scale(0.97);
+        }
+
+        .bank-chip.dragging {
+            opacity: 0.3;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        @media (max-width: 1100px) {
+            .week-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .week-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .day-col {
+            background: var(--lift);
+            border: 1px solid var(--rim);
+            border-radius: var(--r);
+            padding: 14px;
+            min-height: 240px;
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .day-col.drag-over {
+            border-color: var(--lime-rim);
+            background: rgba(184, 242, 65, 0.03);
+        }
+
+        .day-col.today-col {
+            border-color: rgba(184, 242, 65, 0.22);
+        }
+
+        .day-col-head {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--rim);
+        }
+
+        .day-num {
+            font-size: 1.1rem;
+            color: var(--snow);
+        }
+
+        .day-name {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--fog);
+        }
+
+        .today-label {
+            display: inline-block;
+            font-size: 0.6rem;
+            background: var(--lime);
+            color: #0a0c10;
+            padding: 1px 6px;
+            border-radius: var(--r-pill);
+            font-weight: 800;
+            margin-top: 2px;
+        }
+
+        .sched-item {
+            padding: 7px 10px;
+            border-radius: var(--r-xs);
+            margin-bottom: 6px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: grab;
+            border: 1px solid transparent;
+            transition: all 0.15s;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            user-select: none;
+        }
+
+        .sched-item:active {
+            cursor: grabbing;
+        }
+
+        .sched-item.dragging {
+            opacity: 0.3;
+        }
+
+        .sched-item-del {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--ghost);
+            cursor: pointer;
+            font-size: 0.72rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: color 0.12s;
+        }
+
+        .sched-item:hover .sched-item-del {
+            display: block;
+        }
+
+        .sched-item-del:hover {
+            color: var(--rose);
+        }
+
+        /* ═══════════════════════════════ ROADMAP CHIPS ═══════════════════════════════ */
+        .rm-phase {
+            background: var(--lift);
+            border: 1px solid var(--rim);
+            border-radius: var(--r);
+            padding: 24px;
+            margin-bottom: 14px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .rm-phase:hover {
+            border-color: var(--rim2);
+        }
+
+        .rm-phase-bg {
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .rm-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: var(--r-pill);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .rm-phase-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .rm-phase-desc {
+            font-size: 0.84rem;
+            color: var(--fog);
+            line-height: 1.65;
+            margin-bottom: 16px;
+        }
+
+        .chips-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .chip {
+            padding: 5px 13px;
+            border-radius: var(--r-pill);
+            font-size: 0.78rem;
+            font-weight: 500;
+            border: 1px solid var(--rim2);
+            background: var(--raise);
+            cursor: pointer;
+            transition: all 0.18s;
+            color: var(--fog);
+        }
+
+        .chip:hover {
+            border-color: var(--rim3);
+            color: var(--snow);
+            transform: translateY(-1px);
+        }
+
+        .chip.done {
+            background: rgba(184, 242, 65, 0.1);
+            border-color: var(--lime-rim);
+            color: var(--lime);
+            font-weight: 600;
+        }
+
+        .chip.done::after {
+            content: ' ✓';
+        }
+
+        .rm-progress-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .rm-prog-label {
+            font-size: 0.75rem;
+            color: var(--fog);
+            white-space: nowrap;
+        }
+
+        .rm-prog-track {
+            flex: 1;
+            height: 4px;
+            background: var(--raise);
+            border-radius: var(--r-pill);
+            overflow: hidden;
+        }
+
+        .rm-prog-fill {
+            height: 100%;
+            border-radius: var(--r-pill);
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .rm-prog-pct {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--lime);
+            min-width: 32px;
+            text-align: right;
+        }
+
+        /* Roadmap sub-tabs */
+        .subtabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .stab {
+            padding: 7px 16px;
+            border-radius: var(--r-pill);
+            border: 1px solid var(--rim2);
+            background: none;
+            color: var(--fog);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .stab:hover {
+            color: var(--snow);
+            border-color: var(--rim3);
+            background: var(--raise);
+        }
+
+        .stab.active {
+            border-color: var(--lime-rim);
+            color: var(--lime);
+            background: rgba(184, 242, 65, 0.08);
+        }
+
+        /* Pattern rows */
+        .pattern-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 16px;
+            background: var(--raise);
+            border-radius: var(--r-sm);
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .pattern-row:hover {
+            background: var(--float);
+            border-color: var(--rim);
+        }
+
+        .pattern-row.done-p {
+            opacity: 0.55;
+        }
+
+        .pat-box {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 1.5px solid var(--ghost);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            margin-top: 2px;
+            transition: all 0.2s;
+        }
+
+        .pattern-row.done-p .pat-box {
+            background: var(--lime);
+            border-color: var(--lime);
+            color: #0a0c10;
+            font-weight: 900;
+        }
+
+        .pat-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+
+        .pat-desc {
+            font-size: 0.78rem;
+            color: var(--fog);
+            line-height: 1.55;
+        }
+
+        .diff-badge {
+            padding: 2px 8px;
+            border-radius: var(--r-pill);
+            font-size: 0.68rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .d-e {
+            background: rgba(45, 212, 191, 0.12);
+            color: var(--teal);
+        }
+
+        .d-m {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--amber);
+        }
+
+        .d-h {
+            background: rgba(251, 113, 133, 0.12);
+            color: var(--rose);
+        }
+
+        /* ═══════════════════════════════ ANALYTICS ═══════════════════════════════ */
+        .an-bar-wrap {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 130px;
+            padding: 0 4px;
+        }
+
+        .an-bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .an-bar {
+            width: 100%;
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            cursor: pointer;
+            transition: opacity 0.15s;
+            min-height: 4px;
+        }
+
+        .an-bar:hover {
+            opacity: 0.8;
+        }
+
+        .an-bar-val {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--snow);
+            background: var(--float);
+            padding: 2px 5px;
+            border-radius: 3px;
+            opacity: 0;
+            transition: opacity 0.15s;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .an-bar:hover .an-bar-val {
+            opacity: 1;
+        }
+
+        .an-bar-label {
+            font-size: 0.68rem;
+            color: var(--fog);
+        }
+
+        /* Mini line chart using SVG */
+        .mini-line {
+            width: 100%;
+            height: 60px;
+            overflow: visible;
+        }
+
+        /* Category pie */
+        .cat-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 0;
+            border-bottom: 1px solid var(--rim);
+        }
+
+        .cat-row:last-child {
+            border: none;
+        }
+
+        .cat-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .cat-name {
+            flex: 1;
+            font-size: 0.82rem;
+        }
+
+        .cat-cnt {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--fog);
+        }
+
+        .cat-bar-mini {
+            flex: 2;
+            height: 4px;
+            background: var(--raise);
+            border-radius: var(--r-pill);
+            overflow: hidden;
+        }
+
+        .cat-bar-fill {
+            height: 100%;
+            border-radius: var(--r-pill);
+            transition: width 0.6s ease;
+        }
+
+        /* Heatmap */
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 4px;
+            margin-top: 12px;
+        }
+
+        .hm-col {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .hm-cell {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 3px;
+            background: var(--raise);
+            cursor: pointer;
+            transition: transform 0.12s;
+        }
+
+        .hm-cell:hover {
+            transform: scale(1.5);
+            z-index: 10;
+            position: relative;
+        }
+
+        .hm-cell.hl1 {
+            background: rgba(184, 242, 65, 0.2);
+        }
+
+        .hm-cell.hl2 {
+            background: rgba(184, 242, 65, 0.5);
+        }
+
+        .hm-cell.hl3 {
+            background: var(--lime);
+        }
+
+        /* ═══════════════════════════════ CERTS ═══════════════════════════════ */
+        .cert-card {
+            background: var(--lift);
+            border: 1px solid var(--rim);
+            border-radius: var(--r);
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .cert-card:hover {
+            border-color: var(--rim2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .cert-icon {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .cert-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .cert-org {
+            font-size: 0.78rem;
+            color: var(--fog);
+            margin-bottom: 14px;
+        }
+
+        .cert-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .cert-status-btn {
+            padding: 4px 12px;
+            border-radius: var(--r-pill);
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .cs-todo {
+            background: var(--raise);
+            color: var(--fog);
+            border-color: var(--rim2);
+        }
+
+        .cs-inprog {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--sky);
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
+        .cs-done {
+            background: rgba(184, 242, 65, 0.12);
+            color: var(--lime);
+            border-color: var(--lime-rim);
+        }
+
+        /* ═══════════════════════════════ NOTES ═══════════════════════════════ */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .note-card {
+            border-radius: var(--r);
+            padding: 18px;
+            min-height: 150px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 1px solid var(--rim);
+        }
+
+        .note-card:hover {
+            transform: translateY(-2px) rotate(0.4deg);
+        }
+
+        .note-card textarea {
+            width: 100%;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--snow);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            resize: none;
+            line-height: 1.6;
+            height: 100px;
+        }
+
+        .note-ts {
+            font-size: 0.68rem;
+            color: var(--ghost);
+            margin-top: 6px;
+        }
+
+        .note-del {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            color: var(--fog);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: color 0.15s;
+        }
+
+        .note-card:hover .note-del {
+            display: flex;
+        }
+
+        .note-del:hover {
+            color: var(--rose);
+        }
+
+        /* ═══════════════════════════════ MODAL ═══════════════════════════════ */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--lift);
+            border: 1px solid var(--rim2);
+            border-radius: var(--r);
+            padding: 28px;
+            max-width: 460px;
+            width: 94%;
+            animation: popScale 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--fog);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px 8px;
+            border-radius: var(--r-xs);
+            transition: color 0.15s;
+        }
+
+        .modal-close:hover {
+            color: var(--rose);
+        }
+
+        /* ═══════════════════════════════ TOAST ═══════════════════════════════ */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 28px;
+            z-index: 8000;
+            background: var(--float);
+            border: 1px solid var(--rim2);
+            border-radius: var(--r-sm);
+            padding: 12px 18px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(70px);
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            pointer-events: none;
+        }
+
+        .toast.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        /* ═══════════════════════════════ MISC UTILS ═══════════════════════════════ */
+        .flex-c {
+            display: flex;
+            align-items: center;
+        }
+
+        .gap-8 {
+            gap: 8px;
+        }
+
+        .gap-12 {
+            gap: 12px;
+        }
+
+        .mt-4 {
+            margin-top: 4px;
+        }
+
+        .mt-8 {
+            margin-top: 8px;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+
+        .mb-12 {
+            margin-bottom: 12px;
+        }
+
+        .bold {
+            font-weight: 700;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .text-lime {
+            color: var(--lime);
+        }
+
+        .text-fog {
+            color: var(--fog);
+        }
+
+        .text-sm {
+            font-size: 0.82rem;
+        }
+
+        .text-xs {
+            font-size: 0.72rem;
+        }
+
+        .fw7 {
+            font-weight: 700;
+        }
+
+        .syne {
+            font-family: 'Syne', sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main,
+            .topbar {
+                margin-left: 0;
+                left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════ AUTH ═══════ -->
+    <div id="auth-screen">
+        <div class="auth-wrap">
+            <div class="auth-eyebrow">Career OS · v2.0</div>
+            <div class="auth-title">Your <span>90-day</span><br>career command center.</div>
+            <p class="auth-sub">All your DSA, SSC, AI skills, certifications, schedule, and analytics — in one place.
+                Data syncs to GitHub Gist and persists forever.</p>
+            <div class="auth-panel">
+                <label class="field-label">GitHub Personal Access Token</label>
+                <input id="gh-token" class="auth-input" type="password" placeholder="ghp_xxxxxxxxxxxxxxxx"
+                    autocomplete="off">
+                <button class="btn-main" onclick="doLogin()">Connect & Launch →</button>
+                <div id="auth-err"></div>
+                <div class="auth-hint">
+                    <a href="https://github.com/settings/tokens/new?scopes=gist&description=DeepayanOS"
+                        target="_blank">Create token</a> — needs only <strong>gist</strong> scope · Data is stored in a
+                    private Gist
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════ APP ═══════ -->
+    <div id="app">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-mark">Deepayan<span>OS</span></div>
+                <div class="logo-sub">/ Career HQ · 2026</div>
+            </div>
+
+            <div class="sidebar-section-label">Overview</div>
+            <button class="nav-item active" onclick="go('dashboard',this)"><span class="nav-icon">⌂</span>
+                Dashboard</button>
+            <button class="nav-item" onclick="go('analytics',this)"><span class="nav-icon">◈</span> Analytics</button>
+
+            <div class="sidebar-section-label">Career Track</div>
+            <button class="nav-item" onclick="go('dsa',this)"><span class="nav-icon">◇</span> DSA Mastery</button>
+            <button class="nav-item" onclick="go('java',this)"><span class="nav-icon">◆</span> Java + Prod</button>
+            <button class="nav-item" onclick="go('ssc',this)"><span class="nav-icon">◎</span> SSC + Aptitude</button>
+            <button class="nav-item" onclick="go('ai',this)"><span class="nav-icon">⬡</span> AI/ML Skills</button>
+
+            <div class="sidebar-section-label">Planning</div>
+            <button class="nav-item" onclick="go('schedule',this)"><span class="nav-icon">▦</span> Schedule</button>
+            <button class="nav-item" onclick="go('certs',this)"><span class="nav-icon">◉</span> Certifications</button>
+            <button class="nav-item" onclick="go('notes',this)"><span class="nav-icon">▤</span> Notes</button>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avi" id="s-avatar">D</div>
+                    <div>
+                        <div class="user-name">Deepayan</div>
+                        <div class="user-meta" id="s-meta">CSE AI/ML · 2026</div>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="doLogout()">Sign out</button>
+            </div>
+        </aside>
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-title" id="tb-title">Dashboard</div>
+            <div class="topbar-right">
+                <div class="topbar-streak" id="tb-streak">🔥 0 day streak</div>
+                <div class="topbar-clock" id="tb-clock">--:--:--</div>
+                <div class="save-pill" id="save-pill">
+                    <div class="save-dot" id="save-dot"></div>
+                    <span id="save-txt">Saved</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN -->
+        <main class="main">
+
+            <!-- ════ DASHBOARD ════ -->
+            <div class="page active" id="page-dashboard">
+                <!-- Hero -->
+                <div class="hero">
+                    <div>
+                        <div class="hero-greeting">Good to see you,<br><em id="hero-name">Deepayan</em> 👋</div>
+                        <div class="hero-date" id="hero-date">Loading...</div>
+                        <div class="hero-counters">
+                            <div>
+                                <div class="hero-counter-label">Days elapsed</div>
+                                <div><span class="hero-counter-val" id="h-elapsed">—</span> <span
+                                        class="hero-counter-unit">days</span></div>
+                            </div>
+                            <div>
+                                <div class="hero-counter-label">Goal date</div>
+                                <div><span class="hero-counter-val" style="color:var(--amber)">Jun 15</span> <span
+                                        class="hero-counter-unit">'26</span></div>
+                            </div>
+                            <div>
+                                <div class="hero-counter-label">Today's tasks</div>
+                                <div><span class="hero-counter-val" style="color:var(--teal)" id="h-tasks">0/0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="countdown-ring-wrap">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="52" />
+                            <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="52" stroke-dasharray="327"
+                                stroke-dashoffset="327" />
+                        </svg>
+                        <div class="ring-center">
+                            <span class="ring-days" id="ring-days">—</span>
+                            <span class="ring-label">days left</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPIs -->
+                <div class="kpi-grid" style="margin-bottom:18px;">
+                    <div class="card card-accent-lime glow-lime">
+                        <div class="card-kpi-label">DSA Topics Done</div>
+                        <div class="card-kpi-value text-lime" id="kpi-dsa">0%</div>
+                        <div class="card-kpi-sub" id="kpi-dsa-sub">0 / 0 chips</div>
+                        <div class="prog-track" style="margin-top:12px;">
+                            <div class="prog-fill prog-lime" id="kpi-dsa-bar" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="card card-accent-indigo glow-indigo">
+                        <div class="card-kpi-label">SSC + Aptitude</div>
+                        <div class="card-kpi-value" style="color:var(--indigo);" id="kpi-ssc">0%</div>
+                        <div class="card-kpi-sub" id="kpi-ssc-sub">0 / 0 topics</div>
+                        <div class="prog-track" style="margin-top:12px;">
+                            <div class="prog-fill prog-indigo" id="kpi-ssc-bar" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="card card-accent-amber glow-amber">
+                        <div class="card-kpi-label">AI/ML Skills</div>
+                        <div class="card-kpi-value" style="color:var(--amber);" id="kpi-ai">0%</div>
+                        <div class="card-kpi-sub" id="kpi-ai-sub">0 / 0 skills</div>
+                        <div class="prog-track" style="margin-top:12px;">
+                            <div class="prog-fill prog-amber" id="kpi-ai-bar" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="card card-accent-teal">
+                        <div class="card-kpi-label">Overall Journey</div>
+                        <div class="card-kpi-value" style="color:var(--teal);" id="kpi-all">0%</div>
+                        <div class="card-kpi-sub" id="kpi-all-sub">0 / 0 total items</div>
+                        <div class="prog-track" style="margin-top:12px;">
+                            <div class="prog-fill prog-teal" id="kpi-all-bar" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main dash grid -->
+                <div class="dash-grid">
+                    <div>
+                        <!-- Today Tasks -->
+                        <div class="card" style="margin-bottom:14px;">
+                            <div class="flex-c gap-8" style="justify-content:space-between; margin-bottom:14px;">
+                                <div class="syne bold" style="font-size:0.95rem;">Today's Focus</div>
+                                <button class="btn btn-outline btn-sm" onclick="openModal('modal-add-task')">+ Add
+                                    task</button>
+                            </div>
+                            <div id="today-list"></div>
+                            <div style="text-align:center;padding:12px;color:var(--ghost);font-size:0.8rem;"
+                                id="no-tasks-msg">No tasks yet — add some above!</div>
+                        </div>
+
+                        <!-- Streak calendar -->
+                        <div class="card">
+                            <div class="flex-c gap-8" style="justify-content:space-between; margin-bottom:4px;">
+                                <div class="syne bold" style="font-size:0.95rem;">Activity · 90 days</div>
+                                <span class="tag tag-lime" id="streak-tag">0 day streak</span>
+                            </div>
+                            <div class="text-sm text-fog" style="margin-bottom:10px;">Click any cell to toggle activity
+                                level</div>
+                            <div class="streak-cal" id="streak-cal"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <!-- Timer -->
+                        <div class="timer-card" style="margin-bottom:14px;">
+                            <div class="syne bold" style="font-size:0.95rem; margin-bottom:12px;">Focus Timer</div>
+                            <div class="timer-mode-tabs" id="timer-tabs">
+                                <button class="tmb active" onclick="setMode(25,5,'Pomodoro',this)">Pomodoro</button>
+                                <button class="tmb" onclick="setMode(50,10,'Deep Work',this)">Deep Work</button>
+                                <button class="tmb" onclick="setMode(90,15,'Flow State',this)">Flow State</button>
+                                <button class="tmb" onclick="setMode(15,3,'Sprint',this)">Sprint</button>
+                            </div>
+                            <div class="text-xs text-fog" style="text-align:center;margin-bottom:6px;">Custom duration
+                            </div>
+                            <div class="custom-timer-row">
+                                <span class="text-xs text-fog">Work</span>
+                                <input class="custom-timer-inp" id="custom-work" type="number" value="25" min="1"
+                                    max="180" onchange="applyCustomTimer()">
+                                <span class="text-xs text-fog">min &nbsp; Break</span>
+                                <input class="custom-timer-inp" id="custom-break" type="number" value="5" min="1"
+                                    max="60" onchange="applyCustomTimer()">
+                                <span class="text-xs text-fog">min</span>
+                            </div>
+                            <div class="timer-ring-wrap">
+                                <svg width="148" height="148" viewBox="0 0 148 148">
+                                    <circle class="timer-bg-ring" cx="74" cy="74" r="64" />
+                                    <circle class="timer-prog-ring" id="timer-ring" cx="74" cy="74" r="64"
+                                        stroke-dasharray="402" stroke-dashoffset="0" />
+                                </svg>
+                                <div class="timer-center">
+                                    <span class="timer-digits" id="timer-display">25:00</span>
+                                    <div class="timer-mode-label" id="timer-label">FOCUS</div>
+                                </div>
+                            </div>
+                            <div class="timer-btns">
+                                <button class="tmbtn primary" id="btn-start-timer" onclick="timerToggle()">▶
+                                    Start</button>
+                                <button class="tmbtn" onclick="timerReset()">↺ Reset</button>
+                            </div>
+                            <div class="pomodoro-log" id="pomo-log"></div>
+                            <div class="text-xs text-fog" style="margin-top:8px;">Sessions today: <span
+                                    class="mono text-lime" id="pomo-count">0</span> &nbsp;·&nbsp; Focus time: <span
+                                    class="mono" id="focus-time">0m</span></div>
+                        </div>
+
+                        <!-- Week mini -->
+                        <div class="card">
+                            <div class="syne bold" style="font-size:0.95rem; margin-bottom:12px;">This Week</div>
+                            <div id="week-mini"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ ANALYTICS ════ -->
+            <div class="page" id="page-analytics">
+                <div class="pg-title">Analytics</div>
+                <div class="pg-sub">Everything you've done, measured. Track consistency, not perfection.</div>
+
+                <div class="g4" style="margin-bottom:16px;">
+                    <div class="card card-accent-lime">
+                        <div class="card-kpi-label">Total Done</div>
+                        <div class="card-kpi-value text-lime" id="an-total">0</div>
+                        <div class="card-kpi-sub">tasks completed</div>
+                    </div>
+                    <div class="card card-accent-teal">
+                        <div class="card-kpi-label">Focus Hours</div>
+                        <div class="card-kpi-value" style="color:var(--teal)" id="an-hrs">0h</div>
+                        <div class="card-kpi-sub">via timer sessions</div>
+                    </div>
+                    <div class="card card-accent-amber">
+                        <div class="card-kpi-label">Best Streak</div>
+                        <div class="card-kpi-value" style="color:var(--amber)" id="an-best">0</div>
+                        <div class="card-kpi-sub">consecutive days</div>
+                    </div>
+                    <div class="card card-accent-indigo">
+                        <div class="card-kpi-label">Chips Done</div>
+                        <div class="card-kpi-value" style="color:var(--indigo)" id="an-chips">0</div>
+                        <div class="card-kpi-sub">roadmap topics</div>
+                    </div>
+                </div>
+
+                <div class="g2" style="margin-bottom:16px;">
+                    <div class="card">
+                        <div class="syne bold mb-12">Daily Completions — Last 14 Days</div>
+                        <div class="an-bar-wrap" id="an-bar-chart"></div>
+                    </div>
+                    <div class="card">
+                        <div class="syne bold mb-12">Category Breakdown</div>
+                        <div id="cat-breakdown"></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom:16px;">
+                    <div class="syne bold mb-12">90-Day Activity Heatmap</div>
+                    <div class="text-xs text-fog" style="margin-bottom:8px;">Each cell = 1 day · darker = more active ·
+                        click to toggle</div>
+                    <div class="heatmap-grid" id="heatmap"></div>
+                </div>
+
+                <div class="card">
+                    <div class="syne bold mb-12">Roadmap Completion Breakdown</div>
+                    <div id="rm-breakdown"></div>
+                </div>
+            </div>
+
+            <!-- ════ DSA ════ -->
+            <div class="page" id="page-dsa">
+                <div class="pg-title">DSA Mastery</div>
+                <div class="pg-sub">Java-first. Pattern-driven. 3-month sprint to solving any problem. Click chips to
+                    mark done.</div>
+                <div class="subtabs" id="dsa-tabs">
+                    <button class="stab active" onclick="showSub('dsa','m1',this)">Month 1 · Foundations</button>
+                    <button class="stab" onclick="showSub('dsa','m2',this)">Month 2 · Intermediate</button>
+                    <button class="stab" onclick="showSub('dsa','m3',this)">Month 3 · Advanced</button>
+                    <button class="stab" onclick="showSub('dsa','patterns',this)">Problem Patterns</button>
+                </div>
+                <div id="dsa-m1" class="sub-content active"></div>
+                <div id="dsa-m2" class="sub-content" style="display:none"></div>
+                <div id="dsa-m3" class="sub-content" style="display:none"></div>
+                <div id="dsa-patterns" class="sub-content" style="display:none"></div>
+            </div>
+
+            <!-- ════ JAVA ════ -->
+            <div class="page" id="page-java">
+                <div class="pg-title">Java + Production Engineering</div>
+                <div class="pg-sub">Python for fast ML · Java for production systems. Both essential. You know Java —
+                    now master it at scale.</div>
+                <div class="subtabs" id="java-tabs">
+                    <button class="stab active" onclick="showSub('java','core',this)">Java Core</button>
+                    <button class="stab" onclick="showSub('java','adv',this)">Java Advanced</button>
+                    <button class="stab" onclick="showSub('java','spring',this)">Spring Boot</button>
+                    <button class="stab" onclick="showSub('java','pyml',this)">Python ML</button>
+                    <button class="stab" onclick="showSub('java','sd',this)">System Design</button>
+                </div>
+                <div id="java-core" class="sub-content active"></div>
+                <div id="java-adv" class="sub-content" style="display:none"></div>
+                <div id="java-spring" class="sub-content" style="display:none"></div>
+                <div id="java-pyml" class="sub-content" style="display:none"></div>
+                <div id="java-sd" class="sub-content" style="display:none"></div>
+            </div>
+
+            <!-- ════ SSC ════ -->
+            <div class="page" id="page-ssc">
+                <div class="pg-title">SSC + Aptitude</div>
+                <div class="pg-sub">Systematic, topic-by-topic. High ROI topics first. Every chip = one concept
+                    mastered.</div>
+                <div class="subtabs" id="ssc-tabs">
+                    <button class="stab active" onclick="showSub('ssc','quant',this)">Quantitative</button>
+                    <button class="stab" onclick="showSub('ssc','reasoning',this)">Reasoning</button>
+                    <button class="stab" onclick="showSub('ssc','english',this)">English</button>
+                    <button class="stab" onclick="showSub('ssc','gk',this)">GK / GS</button>
+                    <button class="stab" onclick="showSub('ssc','patterns',this)">Aptitude Patterns</button>
+                </div>
+                <div id="ssc-quant" class="sub-content active"></div>
+                <div id="ssc-reasoning" class="sub-content" style="display:none"></div>
+                <div id="ssc-english" class="sub-content" style="display:none"></div>
+                <div id="ssc-gk" class="sub-content" style="display:none"></div>
+                <div id="ssc-patterns" class="sub-content" style="display:none"></div>
+            </div>
+
+            <!-- ════ AI ════ -->
+            <div class="page" id="page-ai">
+                <div class="pg-title">AI / ML Skills</div>
+                <div class="pg-sub">From classical ML to LLMs, agents, and MLOps. Stay current. This is your competitive
+                    edge.</div>
+                <div class="subtabs" id="ai-tabs">
+                    <button class="stab active" onclick="showSub('ai','foundations',this)">Foundations</button>
+                    <button class="stab" onclick="showSub('ai','llms',this)">LLMs 2025+</button>
+                    <button class="stab" onclick="showSub('ai','mlops',this)">MLOps</button>
+                    <button class="stab" onclick="showSub('ai','agentic',this)">Agentic AI</button>
+                </div>
+                <div id="ai-foundations" class="sub-content active"></div>
+                <div id="ai-llms" class="sub-content" style="display:none"></div>
+                <div id="ai-mlops" class="sub-content" style="display:none"></div>
+                <div id="ai-agentic" class="sub-content" style="display:none"></div>
+            </div>
+
+            <!-- ════ SCHEDULE ════ -->
+            <div class="page" id="page-schedule">
+                <div class="flex-c gap-12" style="justify-content:space-between; margin-bottom:20px;">
+                    <div>
+                        <div class="pg-title" style="margin-bottom:0">Weekly Schedule</div>
+                        <div class="pg-sub" style="margin-bottom:0">Drag tasks from the bank onto any day</div>
+                    </div>
+                    <button class="btn btn-lime" onclick="openModal('modal-bank-add')">+ New task</button>
+                </div>
+                <div class="sched-layout">
+                    <div class="sched-bank">
+                        <div class="sched-bank-title">
+                            Task Bank
+                            <span class="tag tag-lime" id="bank-count-tag">0 tasks</span>
+                        </div>
+                        <div class="text-xs text-fog mb-12">Drag → drop onto days below</div>
+                        <div class="bank-pool" id="bank-pool" ondragover="e=>e.preventDefault()"
+                            ondrop="dropTo(event,'bank')"></div>
+                        <div style="margin-top:14px;">
+                            <div class="text-xs text-fog"
+                                style="margin-bottom:6px; text-transform:uppercase; letter-spacing:0.08em;">Filter</div>
+                            <div style="display:flex; gap:5px; flex-wrap:wrap;" id="bank-filter"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="week-grid" id="week-sched"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ CERTS ════ -->
+            <div class="page" id="page-certs">
+                <div class="flex-c gap-12" style="justify-content:space-between; margin-bottom:20px;">
+                    <div>
+                        <div class="pg-title" style="margin-bottom:0">Certifications</div>
+                        <div class="pg-sub" style="margin-bottom:0">Track every credential on your list</div>
+                    </div>
+                    <button class="btn btn-lime" onclick="openModal('modal-cert-add')">+ Add cert</button>
+                </div>
+                <div class="g3" id="cert-grid"></div>
+            </div>
+
+            <!-- ════ NOTES ════ -->
+            <div class="page" id="page-notes">
+                <div class="flex-c gap-12" style="justify-content:space-between; margin-bottom:20px;">
+                    <div>
+                        <div class="pg-title" style="margin-bottom:0">Quick Notes</div>
+                        <div class="pg-sub" style="margin-bottom:0">Ideas, formulas, anything</div>
+                    </div>
+                    <button class="btn btn-lime" onclick="addNote()">+ New note</button>
+                </div>
+                <div class="notes-grid" id="notes-grid"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ════ MODALS ════ -->
+    <div class="overlay" id="modal-add-task" onclick="if(event.target===this)closeModal(this)">
+        <div class="modal">
+            <div class="modal-title">Add Task <button class="modal-close"
+                    onclick="closeModal(document.getElementById('modal-add-task'))">✕</button></div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <label class="field-label">Description</label>
+                <input class="inp" id="m-task-text" placeholder="e.g. Solve 5 LeetCode array problems...">
+                <label class="field-label">Category</label>
+                <select class="inp" id="m-task-cat">
+                    <option value="dsa">DSA</option>
+                    <option value="java">Java/Code</option>
+                    <option value="ssc">SSC</option>
+                    <option value="ai">AI/ML</option>
+                    <option value="proj">Project</option>
+                    <option value="apt">Aptitude</option>
+                </select>
+                <button class="btn btn-lime" style="width:100%;justify-content:center;padding:12px;"
+                    onclick="addTodayTask()">Add to today</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="modal-bank-add" onclick="if(event.target===this)closeModal(this)">
+        <div class="modal">
+            <div class="modal-title">New Task <button class="modal-close"
+                    onclick="closeModal(document.getElementById('modal-bank-add'))">✕</button></div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <input class="inp" id="m-bank-text" placeholder="Task description...">
+                <select class="inp" id="m-bank-cat">
+                    <option value="dsa">DSA</option>
+                    <option value="java">Java/Code</option>
+                    <option value="ssc">SSC</option>
+                    <option value="ai">AI/ML</option>
+                    <option value="proj">Project</option>
+                    <option value="apt">Aptitude</option>
+                </select>
+                <button class="btn btn-lime" style="width:100%;justify-content:center;padding:12px;"
+                    onclick="addBankTask()">Add to bank</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="modal-cert-add" onclick="if(event.target===this)closeModal(this)">
+        <div class="modal">
+            <div class="modal-title">Add Certification <button class="modal-close"
+                    onclick="closeModal(document.getElementById('modal-cert-add'))">✕</button></div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <input class="inp" id="m-cert-name" placeholder="Certification name">
+                <input class="inp" id="m-cert-org" placeholder="Organization">
+                <input class="inp" id="m-cert-icon" placeholder="Emoji (e.g. 🧠)">
+                <select class="inp" id="m-cert-status">
+                    <option value="todo">To Do</option>
+                    <option value="inprog">In Progress</option>
+                    <option value="done">Done</option>
+                </select>
+                <button class="btn btn-lime" style="width:100%;justify-content:center;padding:12px;"
+                    onclick="saveCert()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <div class="toast-dot" id="toast-dot"></div><span id="toast-msg"></span>
+    </div>
+
+    <script>
+        /* ═══════════════════════════════════════════════════
+           STATE & GIST
+        ═══════════════════════════════════════════════════ */
+        const GIST_FILE = 'deepayan_os_v2.json';
+        let TOKEN = '', GIST_ID = '', S = {}, _saveTimer = null, _toastTimer = null;
+
+        const DEFAULT = () => ({
+            startDate: today(),
+            todayTasks: [],
+            bankTasks: [],
+            scheduleTasks: {},
+            chipsDone: {},
+            streak: {},
+            certs: JSON.parse(JSON.stringify(CERTS_DEFAULT)),
+            notes: [],
+            pomodoroSessions: [],
+            totalFocusMin: 0,
+            version: 2
+        });
+
+        function today() { return new Date().toISOString().slice(0, 10); }
+        function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+        /* AUTH */
+        async function doLogin() {
+            const token = document.getElementById('gh-token').value.trim();
+            if (!token) { setAuthErr('Enter a token.'); return; }
+            const btn = document.querySelector('#auth-screen .btn-main');
+            btn.textContent = 'Connecting…'; btn.disabled = true;
+            try {
+                const u = await ghFetch('https://api.github.com/user', token);
+                TOKEN = token; localStorage.setItem('gh_token', token);
+                document.getElementById('s-avatar').textContent = u.login[0].toUpperCase();
+                document.getElementById('hero-name').textContent = u.login;
+                await loadOrCreateGist();
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                boot();
+            } catch (e) {
+                setAuthErr('Failed: ' + e.message);
+                btn.textContent = 'Connect & Launch →'; btn.disabled = false;
+            }
+        }
+
+        function setAuthErr(msg) {
+            const el = document.getElementById('auth-err');
+            el.textContent = msg; el.style.display = 'block';
+        }
+
+        async function ghFetch(url, tok, opts = {}) {
+            const res = await fetch(url, {
+                ...opts,
+                headers: { Authorization: `token ${tok || TOKEN}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json', ...(opts.headers || {}) }
+            });
+            if (!res.ok) throw new Error(`GitHub ${res.status}`);
+            return res.json();
+        }
+
+        async function loadOrCreateGist() {
+            const gists = await ghFetch('https://api.github.com/gists');
+            const found = gists.find(g => g.files && g.files[GIST_FILE]);
+            if (found) {
+                GIST_ID = found.id;
+                const detail = await ghFetch(`https://api.github.com/gists/${GIST_ID}`);
+                try { S = { ...DEFAULT(), ...JSON.parse(detail.files[GIST_FILE].content) }; }
+                catch { S = DEFAULT(); }
+            } else {
+                S = DEFAULT();
+                if (S.bankTasks.length === 0) S.bankTasks = SEED_TASKS.map(t => ({ ...t, id: uid() }));
+                const r = await ghFetch('https://api.github.com/gists', TOKEN, {
+                    method: 'POST',
+                    body: JSON.stringify({ description: 'DeepayanOS Career Data', public: false, files: { [GIST_FILE]: { content: JSON.stringify(S, null, 2) } } })
+                });
+                GIST_ID = r.id;
+            }
+            if (!S.bankTasks || S.bankTasks.length === 0) S.bankTasks = SEED_TASKS.map(t => ({ ...t, id: uid() }));
+            if (!S.certs || S.certs.length === 0) S.certs = JSON.parse(JSON.stringify(CERTS_DEFAULT));
+        }
+
+        function scheduleSave() {
+            setSaving(true);
+            clearTimeout(_saveTimer);
+            _saveTimer = setTimeout(async () => {
+                try {
+                    await ghFetch(`https://api.github.com/gists/${GIST_ID}`, TOKEN, {
+                        method: 'PATCH',
+                        body: JSON.stringify({ files: { [GIST_FILE]: { content: JSON.stringify(S, null, 2) } } })
+                    });
+                    setSaving(false);
+                } catch { setSaving(false, true); }
+            }, 1600);
+        }
+
+        function setSaving(saving, err = false) {
+            const dot = document.getElementById('save-dot');
+            const txt = document.getElementById('save-txt');
+            if (saving) { dot.classList.add('pulsing'); txt.textContent = 'Saving…'; }
+            else { dot.classList.remove('pulsing'); txt.textContent = err ? 'Save failed' : 'Saved'; }
+        }
+
+        function doLogout() {
+            localStorage.removeItem('gh_token');
+            TOKEN = ''; GIST_ID = '';
+            document.getElementById('auth-screen').style.display = 'flex';
+            document.getElementById('app').style.display = 'none';
+        }
+
+        window.addEventListener('load', async () => {
+            const saved = localStorage.getItem('gh_token');
+            if (saved) { document.getElementById('gh-token').value = saved; await doLogin(); }
+        });
+
+        /* ═══════════════════════════════════════════════════
+           NAVIGATION
+        ═══════════════════════════════════════════════════ */
+        const PAGE_TITLES = { dashboard: 'Dashboard', analytics: 'Analytics', dsa: 'DSA Mastery', java: 'Java + Production', ssc: 'SSC + Aptitude', ai: 'AI / ML Skills', schedule: 'Schedule', certs: 'Certifications', notes: 'Notes' };
+
+        function go(id, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            btn.classList.add('active');
+            document.getElementById('tb-title').textContent = PAGE_TITLES[id] || id;
+            if (id === 'analytics') renderAnalytics();
+            if (id === 'schedule') renderSchedule();
+            if (id === 'certs') renderCerts();
+        }
+
+        function showSub(ns, id, btn) {
+            document.querySelectorAll(`#${ns}-tabs .stab`).forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll(`#page-${ns} .sub-content`).forEach(el => el.style.display = 'none');
+            const el = document.getElementById(`${ns}-${id}`);
+            if (el) { el.style.display = 'block'; el.style.animation = 'riseIn 0.3s ease'; }
+        }
+
+        /* ═══════════════════════════════════════════════════
+           BOOT
+        ═══════════════════════════════════════════════════ */
+        function boot() {
+            startClock();
+            renderDashboard();
+            renderAllRoadmaps();
+            renderSchedule();
+            renderCerts();
+            renderNotes();
+            updateKPIs();
+        }
+
+        /* ═══════════════════════════════════════════════════
+           CLOCK & HERO
+        ═══════════════════════════════════════════════════ */
+        function startClock() {
+            const tick = () => {
+                const now = new Date();
+                document.getElementById('tb-clock').textContent = now.toLocaleTimeString('en-IN', { hour12: true });
+                document.getElementById('hero-date').textContent =
+                    now.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                const start = new Date(S.startDate || today());
+                const elapsed = Math.floor((now - start) / 86400000);
+                document.getElementById('h-elapsed').textContent = elapsed;
+                // Ring countdown
+                const goal = new Date('2026-06-15');
+                const daysLeft = Math.max(0, Math.ceil((goal - now) / 86400000));
+                const totalDays = 90;
+                document.getElementById('ring-days').textContent = daysLeft;
+                const pct = Math.max(0, 1 - daysLeft / totalDays);
+                const circ = 327;
+                document.getElementById('ring-fill').setAttribute('stroke-dashoffset', circ - circ * pct);
+            };
+            tick(); setInterval(tick, 1000);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           DASHBOARD
+        ═══════════════════════════════════════════════════ */
+        function renderDashboard() {
+            renderTodayTasks();
+            renderStreakCal();
+            renderWeekMini();
+            updateKPIs();
+            updatePomodoroDisplay();
+        }
+
+        function updateKPIs() {
+            const count = (data, ns) => {
+                const total = data.reduce((a, b) => a + (b.topics?.length || 0), 0);
+                const done = data.reduce((a, b) => a + (b.topics || []).filter((_, i2) => S.chipsDone[`${ns}-${b._id || b.title}-${i2}`]).length, 0);
+                return { total, done, pct: total ? Math.round(done / total * 100) : 0 };
+            };
+            const dsa = count(DSA_DATA, 'dsa');
+            const ssc = count([...SSC_QUANT, ...SSC_REASON, ...SSC_ENG, ...SSC_GK], 'ssc');
+            const ai = count([...AI_FOUND, ...AI_LLM, ...AI_MLOPS, ...AI_AGENT], 'ai');
+            const java = count([...JAVA_CORE, ...JAVA_ADV, ...JAVA_SPRING, ...JAVA_PY, ...JAVA_SD], 'java');
+            const total_done = dsa.done + ssc.done + ai.done + java.done;
+            const total_all = dsa.total + ssc.total + ai.total + java.total;
+            const all_pct = total_all ? Math.round(total_done / total_all * 100) : 0;
+
+            const set = (id, val, sub, bar) => {
+                const el = document.getElementById(id); if (el) el.textContent = val + '%';
+                const sel = document.getElementById(id + '-sub'); if (sel) sel.textContent = sub;
+                const bel = document.getElementById(id + '-bar'); if (bel) bel.style.width = val + '%';
+            };
+            set('kpi-dsa', dsa.pct, `${dsa.done} / ${dsa.total} topics`, 'kpi-dsa-bar');
+            set('kpi-ssc', ssc.pct, `${ssc.done} / ${ssc.total} topics`, 'kpi-ssc-bar');
+            set('kpi-ai', ai.pct, `${ai.done} / ${ai.total} skills`, 'kpi-ai-bar');
+            set('kpi-all', all_pct, `${total_done} / ${total_all} items`, 'kpi-all-bar');
+
+            // Streak
+            let streak = 0; const d = new Date();
+            for (let i = 0; i < 90; i++) {
+                const k = d.toISOString().slice(0, 10);
+                if (S.streak[k]) { streak++; d.setDate(d.getDate() - 1); } else break;
+            }
+            const st = document.getElementById('tb-streak'); if (st) st.textContent = `🔥 ${streak} day streak`;
+            const stg = document.getElementById('streak-tag'); if (stg) stg.textContent = `${streak} day streak`;
+
+            // Tasks
+            const td = today(); const tt = (S.todayTasks || []).filter(t => t.date === td);
+            const done = tt.filter(t => t.done).length;
+            const htasks = document.getElementById('h-tasks'); if (htasks) htasks.textContent = `${done}/${tt.length}`;
+
+            // Analytics
+            const aTotal = document.getElementById('an-total'); if (aTotal) aTotal.textContent = (S.todayTasks || []).filter(t => t.done).length;
+            const aHrs = document.getElementById('an-hrs'); if (aHrs) aHrs.textContent = ((S.totalFocusMin || 0) / 60).toFixed(1) + 'h';
+            const aBest = document.getElementById('an-best'); if (aBest) aBest.textContent = streak;
+            const aChips = document.getElementById('an-chips'); if (aChips) aChips.textContent = total_done;
+        }
+
+        function renderTodayTasks() {
+            const list = document.getElementById('today-list');
+            const msg = document.getElementById('no-tasks-msg');
+            if (!list) return;
+            const td = today();
+            const tasks = (S.todayTasks || []).filter(t => t.date === td);
+            list.innerHTML = '';
+            if (tasks.length === 0) { if (msg) msg.style.display = 'block'; return; }
+            if (msg) msg.style.display = 'none';
+            tasks.forEach((t, i) => {
+                const row = document.createElement('div');
+                row.className = 'task-row' + (t.done ? ' done' : '');
+                row.setAttribute('data-idx', i);
+                row.innerHTML = `
+      <div class="t-check">${t.done ? '✓' : ''}</div>
+      <div class="t-text">${escHtml(t.text)}</div>
+      <span class="t-tag t-${t.cat}">${CAT_LABELS[t.cat] || t.cat}</span>
+      <button class="t-del" onclick="event.stopPropagation();delTodayTask('${t.id}')">✕</button>
+    `;
+                row.onclick = () => toggleTodayTask(t.id);
+                list.appendChild(row);
+            });
+        }
+
+        function toggleTodayTask(id) {
+            const t = (S.todayTasks || []).find(x => x.id === id);
+            if (!t) return;
+            t.done = !t.done;
+            if (t.done) bumpStreak(today(), 2);
+            renderTodayTasks(); updateKPIs(); scheduleSave();
+        }
+
+        function delTodayTask(id) {
+            S.todayTasks = (S.todayTasks || []).filter(x => x.id !== id);
+            renderTodayTasks(); updateKPIs(); scheduleSave();
+        }
+
+        function addTodayTask() {
+            const text = document.getElementById('m-task-text').value.trim();
+            const cat = document.getElementById('m-task-cat').value;
+            if (!text) return;
+            (S.todayTasks = S.todayTasks || []).push({ id: uid(), text, cat, done: false, date: today() });
+            document.getElementById('m-task-text').value = '';
+            closeModal(document.getElementById('modal-add-task'));
+            renderTodayTasks(); updateKPIs(); scheduleSave();
+            showToast('Task added!', '#b8f241');
+        }
+
+        function renderStreakCal() {
+            const grid = document.getElementById('streak-cal'); if (!grid) return;
+            grid.innerHTML = '';
+            const now = new Date(); const tdStr = today();
+            for (let w = 12; w >= 0; w--) {
+                const col = document.createElement('div'); col.className = 'sc-col';
+                for (let d = 6; d >= 0; d--) {
+                    const dt = new Date(now); dt.setDate(now.getDate() - (w * 7 + d));
+                    if (dt > now) continue;
+                    const k = dt.toISOString().slice(0, 10);
+                    const level = S.streak[k] || 0;
+                    const cell = document.createElement('div');
+                    cell.className = 'sc-cell' + (level ? ` l${Math.min(level, 3)}` : '') + (k === tdStr ? ' today-cell' : '');
+                    cell.title = k;
+                    cell.onclick = () => { S.streak[k] = (S.streak[k] || 0) < 3 ? (S.streak[k] || 0) + 1 : 0; renderStreakCal(); updateKPIs(); scheduleSave(); };
+                    col.appendChild(cell);
+                }
+                grid.appendChild(col);
+            }
+        }
+
+        function bumpStreak(k, level) {
+            if ((S.streak[k] || 0) < level) S.streak[k] = level;
+        }
+
+        function renderWeekMini() {
+            const wrap = document.getElementById('week-mini'); if (!wrap) return;
+            wrap.innerHTML = '';
+            const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const now = new Date(); const tdStr = today();
+            const start = new Date(now); start.setDate(now.getDate() - now.getDay());
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(start); d.setDate(start.getDate() + i);
+                const k = d.toISOString().slice(0, 10);
+                const isToday = k === tdStr;
+                const tasks = (S.todayTasks || []).filter(t => t.date === k);
+                const done = tasks.filter(t => t.done).length;
+                const div = document.createElement('div');
+                div.style.cssText = `display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-xs);background:${isToday ? 'rgba(184,242,65,0.06)' : 'var(--raise)'};border:1px solid ${isToday ? 'var(--lime-rim)' : 'var(--rim)'};margin-bottom:6px;`;
+                div.innerHTML = `
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.78rem;color:${isToday ? 'var(--lime)' : 'var(--fog)'};width:28px;">${DAYS[d.getDay()]}</div>
+      <div style="font-size:0.72rem;color:var(--ghost);width:36px;">${d.getDate()} ${d.toLocaleDateString('en-IN', { month: 'short' })}</div>
+      <div style="flex:1;height:4px;background:var(--float);border-radius:3px;overflow:hidden;">
+        <div style="height:100%;width:${tasks.length ? Math.round(done / tasks.length * 100) : 0}%;background:var(--lime);border-radius:3px;transition:width 0.5s ease;"></div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--fog);">${done}/${tasks.length}</div>
+    `;
+                wrap.appendChild(div);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+           TIMER
+        ═══════════════════════════════════════════════════ */
+        let TM = { work: 25, brk: 5, secs: 25 * 60, running: false, isBreak: false, iv: null, total_circ: 402 };
+
+        function setMode(w, b, name, btn) {
+            document.querySelectorAll('#timer-tabs .tmb').forEach(x => x.classList.remove('active'));
+            btn.classList.add('active');
+            TM.work = w; TM.brk = b;
+            document.getElementById('custom-work').value = w;
+            document.getElementById('custom-break').value = b;
+            timerReset();
+        }
+
+        function applyCustomTimer() {
+            const w = parseInt(document.getElementById('custom-work').value) || 25;
+            const b = parseInt(document.getElementById('custom-break').value) || 5;
+            TM.work = w; TM.brk = b;
+            document.querySelectorAll('#timer-tabs .tmb').forEach(x => x.classList.remove('active'));
+            timerReset();
+        }
+
+        function timerToggle() {
+            if (TM.running) {
+                clearInterval(TM.iv); TM.running = false;
+                document.getElementById('btn-start-timer').textContent = '▶ Resume';
+                document.getElementById('timer-ring').classList.add('paused');
+            } else {
+                TM.running = true;
+                document.getElementById('btn-start-timer').textContent = '⏸ Pause';
+                document.getElementById('timer-ring').classList.remove('paused');
+                TM.iv = setInterval(() => {
+                    TM.secs--;
+                    updateTimerDisplay();
+                    if (TM.secs <= 0) {
+                        clearInterval(TM.iv); TM.running = false;
+                        if (!TM.isBreak) {
+                            S.totalFocusMin = (S.totalFocusMin || 0) + TM.work;
+                            S.pomodoroSessions = [...(S.pomodoroSessions || []), { date: today(), min: TM.work }];
+                            updatePomodoroDisplay();
+                            bumpStreak(today(), 2);
+                            scheduleSave(); updateKPIs();
+                            showToast('Focus session complete! Take a break 🎉', '#b8f241');
+                            TM.isBreak = true; TM.secs = TM.brk * 60;
+                            document.getElementById('timer-label').textContent = 'BREAK';
+                            document.getElementById('timer-ring').classList.add('break-mode');
+                        } else {
+                            TM.isBreak = false; TM.secs = TM.work * 60;
+                            document.getElementById('timer-label').textContent = 'FOCUS';
+                            document.getElementById('timer-ring').classList.remove('break-mode');
+                            showToast('Break over — back to work 🚀', '#38bdf8');
+                        }
+                        document.getElementById('btn-start-timer').textContent = '▶ Start';
+                        updateTimerDisplay();
+                    }
+                }, 1000);
+            }
+        }
+
+        function timerReset() {
+            clearInterval(TM.iv); TM.running = false; TM.isBreak = false;
+            TM.secs = TM.work * 60;
+            document.getElementById('btn-start-timer').textContent = '▶ Start';
+            document.getElementById('timer-label').textContent = 'FOCUS';
+            document.getElementById('timer-ring').classList.remove('paused', 'break-mode');
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(TM.secs / 60), s = TM.secs % 60;
+            document.getElementById('timer-display').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            const total = (TM.isBreak ? TM.brk : TM.work) * 60;
+            const progress = 1 - TM.secs / total;
+            document.getElementById('timer-ring').setAttribute('stroke-dashoffset', TM.total_circ * (1 - progress));
+        }
+
+        function updatePomodoroDisplay() {
+            const sessions = (S.pomodoroSessions || []).filter(x => x.date === today());
+            const count = sessions.length;
+            const mins = sessions.reduce((a, b) => a + b.min, 0);
+            const el = document.getElementById('pomo-count'); if (el) el.textContent = count;
+            const ft = document.getElementById('focus-time'); if (ft) ft.textContent = mins + 'm';
+            const log = document.getElementById('pomo-log'); if (!log) return;
+            log.innerHTML = '';
+            sessions.forEach(x => {
+                const p = document.createElement('div');
+                p.className = 'pomo-pip' + (x.isBreak ? ' break-pip' : '');
+                log.appendChild(p);
+            });
+        }
+
+        /* ═══════════════════════════════════════════════════
+           CHIPS / ROADMAPS
+        ═══════════════════════════════════════════════════ */
+        function renderPhases(containerId, phases, ns, colorClass) {
+            const el = document.getElementById(containerId); if (!el) return;
+            el.innerHTML = '';
+            const colors = ['var(--lime)', 'var(--indigo)', 'var(--amber)', 'var(--teal)', 'var(--rose)', 'var(--sky)'];
+            const bgColors = ['rgba(184,242,65,0.06)', 'rgba(91,110,245,0.06)', 'rgba(245,158,11,0.06)', 'rgba(45,212,191,0.06)', 'rgba(251,113,133,0.06)', 'rgba(56,189,248,0.06)'];
+            phases.forEach((ph, pi) => {
+                const color = colors[pi % colors.length];
+                const bg = bgColors[pi % bgColors.length];
+                const done_count = (ph.topics || []).filter((_, i) => S.chipsDone[`${ns}-${ph.title}-${i}`]).length;
+                const pct = ph.topics?.length ? Math.round(done_count / ph.topics.length * 100) : 0;
+                const block = document.createElement('div');
+                block.className = 'rm-phase';
+                block.innerHTML = `
+      <div class="rm-phase-bg" style="background:radial-gradient(circle,${bg} 0%,transparent 70%)"></div>
+      <span class="rm-tag" style="background:${bg};color:${color};border:1px solid ${color}33">${ph.tag}</span>
+      <div class="rm-phase-title">${ph.title}</div>
+      <div class="rm-phase-desc">${ph.desc}</div>
+      <div class="chips-wrap" id="chips-${containerId}-${pi}"></div>
+      <div class="rm-progress-row">
+        <div class="rm-prog-label">${done_count} / ${ph.topics?.length || 0} done</div>
+        <div class="rm-prog-track"><div class="rm-prog-fill" id="pf-${containerId}-${pi}" style="width:${pct}%;background:${color}"></div></div>
+        <div class="rm-prog-pct" id="pp-${containerId}-${pi}" style="color:${color}">${pct}%</div>
+      </div>
+    `;
+                el.appendChild(block);
+                const cw = block.querySelector(`#chips-${containerId}-${pi}`);
+                (ph.topics || []).forEach((topic, ti) => {
+                    const key = `${ns}-${ph.title}-${ti}`;
+                    const chip = document.createElement('div');
+                    chip.className = 'chip' + (S.chipsDone[key] ? ' done' : '');
+                    chip.textContent = topic;
+                    chip.onclick = () => {
+                        S.chipsDone[key] = !S.chipsDone[key];
+                        chip.classList.toggle('done');
+                        refreshPhaseProgress(containerId, pi, ph, ns, color);
+                        updateKPIs(); scheduleSave();
+                    };
+                    cw.appendChild(chip);
+                });
+            });
+        }
+
+        function refreshPhaseProgress(containerId, pi, ph, ns, color) {
+            const done = (ph.topics || []).filter((_, i) => S.chipsDone[`${ns}-${ph.title}-${i}`]).length;
+            const pct = ph.topics?.length ? Math.round(done / ph.topics.length * 100) : 0;
+            const fill = document.getElementById(`pf-${containerId}-${pi}`); if (fill) fill.style.width = pct + '%';
+            const pctEl = document.getElementById(`pp-${containerId}-${pi}`); if (pctEl) pctEl.textContent = pct + '%';
+        }
+
+        function renderPatternList(containerId, patterns) {
+            const el = document.getElementById(containerId); if (!el) return;
+            el.innerHTML = '';
+            patterns.forEach((p, i) => {
+                const key = `pat-${containerId}-${i}`;
+                const row = document.createElement('div');
+                row.className = 'pattern-row' + (S.chipsDone[key] ? ' done-p' : '');
+                row.innerHTML = `
+      <div class="pat-box">${S.chipsDone[key] ? '✓' : ''}</div>
+      <div style="flex:1">
+        <div class="pat-name">${p.name}</div>
+        <div class="pat-desc">${p.desc}</div>
+      </div>
+      <span class="diff-badge d-${p.diff}">${p.diff === 'e' ? 'Easy' : p.diff === 'm' ? 'Medium' : 'Hard'}</span>
+    `;
+                row.onclick = () => {
+                    S.chipsDone[key] = !S.chipsDone[key];
+                    row.classList.toggle('done-p');
+                    row.querySelector('.pat-box').textContent = S.chipsDone[key] ? '✓' : '';
+                    scheduleSave();
+                };
+                el.appendChild(row);
+            });
+        }
+
+        function renderAllRoadmaps() {
+            renderPhases('dsa-m1', DSA_M1, 'dsa');
+            renderPhases('dsa-m2', DSA_M2, 'dsa');
+            renderPhases('dsa-m3', DSA_M3, 'dsa');
+            renderPatternList('dsa-patterns', DSA_PATTERNS);
+            renderPhases('java-core', JAVA_CORE, 'java');
+            renderPhases('java-adv', JAVA_ADV, 'java');
+            renderPhases('java-spring', JAVA_SPRING, 'java');
+            renderPhases('java-pyml', JAVA_PY, 'java');
+            renderPhases('java-sd', JAVA_SD, 'java');
+            renderPhases('ssc-quant', SSC_QUANT, 'ssc');
+            renderPhases('ssc-reasoning', SSC_REASON, 'ssc');
+            renderPhases('ssc-english', SSC_ENG, 'ssc');
+            renderPhases('ssc-gk', SSC_GK, 'ssc');
+            renderPatternList('ssc-patterns', APTITUDE_PATTERNS);
+            renderPhases('ai-foundations', AI_FOUND, 'ai');
+            renderPhases('ai-llms', AI_LLM, 'ai');
+            renderPhases('ai-mlops', AI_MLOPS, 'ai');
+            renderPhases('ai-agentic', AI_AGENT, 'ai');
+        }
+
+        /* ═══════════════════════════════════════════════════
+           SCHEDULE
+        ═══════════════════════════════════════════════════ */
+        let _drag = null, _dragSrc = null;
+
+        function renderSchedule() {
+            renderBankPool();
+            const grid = document.getElementById('week-sched'); if (!grid) return;
+            grid.innerHTML = '';
+            const now = new Date(); const tdStr = today();
+            const start = new Date(now); start.setDate(now.getDate() - now.getDay());
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach((name, i) => {
+                const d = new Date(start); d.setDate(start.getDate() + i);
+                const k = d.toISOString().slice(0, 10);
+                const isToday = k === tdStr;
+                const col = document.createElement('div');
+                col.className = 'day-col' + (isToday ? ' today-col' : '');
+                col.innerHTML = `
+      <div class="day-col-head">
+        <div class="day-num">${d.getDate()}</div>
+        <div class="day-name">${name}</div>
+        ${isToday ? '<span class="today-label">TODAY</span>' : ''}
+      </div>
+      <div class="col-body" id="col-${k}"></div>
+    `;
+                col.ondragover = e => { e.preventDefault(); col.classList.add('drag-over'); };
+                col.ondragleave = () => col.classList.remove('drag-over');
+                col.ondrop = e => { col.classList.remove('drag-over'); dropTo(e, k); };
+                grid.appendChild(col);
+                (S.scheduleTasks[k] || []).forEach(t => {
+                    document.getElementById('col-' + k).appendChild(makeSchedItem(t, k));
+                });
+            });
+            // bank count
+            const bc = document.getElementById('bank-count-tag');
+            if (bc) bc.textContent = `${(S.bankTasks || []).length} tasks`;
+        }
+
+        function renderBankPool() {
+            const pool = document.getElementById('bank-pool'); if (!pool) return;
+            pool.innerHTML = '';
+            const filter = _bankFilter || 'all';
+            (S.bankTasks || []).filter(t => filter === 'all' || t.cat === filter).forEach(t => {
+                const chip = document.createElement('div');
+                chip.className = 'bank-chip';
+                chip.style.cssText = catBg(t.cat);
+                chip.draggable = true;
+                chip.innerHTML = `<span style="font-size:0.75rem">${CAT_ICONS[t.cat] || '○'}</span>${escHtml(t.text)}`;
+                chip.ondragstart = e => { _drag = t; _dragSrc = 'bank'; chip.classList.add('dragging'); };
+                chip.ondragend = () => chip.classList.remove('dragging');
+                pool.appendChild(chip);
+            });
+            // filter buttons
+            const fb = document.getElementById('bank-filter'); if (!fb) return;
+            fb.innerHTML = '';
+            ['all', 'dsa', 'java', 'ssc', 'ai', 'proj', 'apt'].forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline btn-sm' + ((_bankFilter || 'all') === c ? ' active' : '');
+                btn.textContent = c === 'all' ? 'All' : CAT_LABELS[c];
+                btn.style.padding = '4px 10px'; btn.style.fontSize = '0.7rem';
+                if ((_bankFilter || 'all') === c) btn.style.borderColor = 'var(--lime-rim)';
+                btn.onclick = () => { _bankFilter = c; renderBankPool(); };
+                fb.appendChild(btn);
+            });
+        }
+        let _bankFilter = 'all';
+
+        function makeSchedItem(t, dayKey) {
+            const el = document.createElement('div');
+            el.className = 'sched-item';
+            el.style.cssText = catBg(t.cat);
+            el.draggable = true;
+            el.innerHTML = `${escHtml(t.text)}<button class="sched-item-del" onclick="event.stopPropagation();delSchedTask('${t.id}','${dayKey}')">✕</button>`;
+            el.ondragstart = () => { _drag = t; _dragSrc = dayKey; el.classList.add('dragging'); };
+            el.ondragend = () => el.classList.remove('dragging');
+            return el;
+        }
+
+        function dropTo(e, target) {
+            e.preventDefault();
+            document.querySelectorAll('.drag-over').forEach(x => x.classList.remove('drag-over'));
+            if (!_drag) return;
+            if (_dragSrc === 'bank' && target !== 'bank') {
+                S.scheduleTasks[target] = [...(S.scheduleTasks[target] || []), { id: uid(), text: _drag.text, cat: _drag.cat }];
+            } else if (_dragSrc !== 'bank' && target === 'bank') {
+                S.scheduleTasks[_dragSrc] = (S.scheduleTasks[_dragSrc] || []).filter(x => x.id !== _drag.id);
+            } else if (_dragSrc !== 'bank' && target !== 'bank' && _dragSrc !== target) {
+                S.scheduleTasks[_dragSrc] = (S.scheduleTasks[_dragSrc] || []).filter(x => x.id !== _drag.id);
+                S.scheduleTasks[target] = [...(S.scheduleTasks[target] || []), { ...structuredClone(_drag), id: uid() }];
+            }
+            _drag = null; _dragSrc = null;
+            renderSchedule(); scheduleSave();
+        }
+
+        function delSchedTask(id, dayKey) {
+            S.scheduleTasks[dayKey] = (S.scheduleTasks[dayKey] || []).filter(x => x.id !== id);
+            renderSchedule(); scheduleSave();
+        }
+
+        function addBankTask() {
+            const text = document.getElementById('m-bank-text').value.trim();
+            const cat = document.getElementById('m-bank-cat').value;
+            if (!text) return;
+            (S.bankTasks = S.bankTasks || []).push({ id: uid(), text, cat });
+            document.getElementById('m-bank-text').value = '';
+            closeModal(document.getElementById('modal-bank-add'));
+            renderSchedule(); scheduleSave();
+            showToast('Task added to bank!', '#38bdf8');
+        }
+
+        /* ═══════════════════════════════════════════════════
+           ANALYTICS
+        ═══════════════════════════════════════════════════ */
+        function renderAnalytics() {
+            updateKPIs();
+            renderBarChart();
+            renderCatBreakdown();
+            renderHeatmap();
+            renderRmBreakdown();
+        }
+
+        function renderBarChart() {
+            const wrap = document.getElementById('an-bar-chart'); if (!wrap) return;
+            wrap.innerHTML = '';
+            const days = []; const now = new Date();
+            for (let i = 13; i >= 0; i--) {
+                const d = new Date(now); d.setDate(now.getDate() - i);
+                const k = d.toISOString().slice(0, 10);
+                const tasks = (S.todayTasks || []).filter(t => t.date === k);
+                days.push({ k, label: d.toLocaleDateString('en-IN', { weekday: 'short' }), done: tasks.filter(t => t.done).length, total: tasks.length });
+            }
+            const maxVal = Math.max(...days.map(d => d.done), 1);
+            const colors = ['#b8f241', '#5b6ef5', '#f59e0b', '#2dd4bf', '#fb7185', '#38bdf8', '#b8f241'];
+            days.forEach((d, i) => {
+                const pct = Math.round(d.done / maxVal * 100);
+                const col = document.createElement('div');
+                col.className = 'an-bar-col';
+                col.innerHTML = `
+      <div class="an-bar" style="height:${pct}%;background:${colors[i % colors.length]};transition:height 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 30}ms">
+        <div class="an-bar-val">${d.done} done</div>
+      </div>
+      <div class="an-bar-label">${d.label}</div>
+    `;
+                wrap.appendChild(col);
+            });
+        }
+
+        function renderCatBreakdown() {
+            const wrap = document.getElementById('cat-breakdown'); if (!wrap) return;
+            const cats = ['dsa', 'java', 'ssc', 'ai', 'proj', 'apt'];
+            const colors = ['#b8f241', '#f59e0b', '#38bdf8', '#2dd4bf', '#fb7185', '#5b6ef5'];
+            const all = S.todayTasks || [];
+            const maxCount = Math.max(...cats.map(c => all.filter(t => t.cat === c && t.done).length), 1);
+            wrap.innerHTML = cats.map((c, i) => {
+                const cnt = all.filter(t => t.cat === c && t.done).length;
+                const pct = Math.round(cnt / maxCount * 100);
+                return `
+      <div class="cat-row">
+        <div class="cat-dot" style="background:${colors[i]}"></div>
+        <div class="cat-name">${CAT_LABELS[c]}</div>
+        <div class="cat-bar-mini"><div class="cat-bar-fill" style="width:${pct}%;background:${colors[i]}"></div></div>
+        <div class="cat-cnt">${cnt}</div>
+      </div>
+    `;
+            }).join('');
+        }
+
+        function renderHeatmap() {
+            const grid = document.getElementById('heatmap'); if (!grid) return;
+            grid.innerHTML = '';
+            const now = new Date();
+            for (let w = 12; w >= 0; w--) {
+                const col = document.createElement('div'); col.className = 'hm-col';
+                for (let d = 6; d >= 0; d--) {
+                    const dt = new Date(now); dt.setDate(now.getDate() - (w * 7 + d));
+                    if (dt > now) continue;
+                    const k = dt.toISOString().slice(0, 10);
+                    const level = S.streak[k] || 0;
+                    const cell = document.createElement('div');
+                    cell.className = 'hm-cell' + (level ? ` hl${Math.min(level, 3)}` : '');
+                    cell.title = k + (level ? ` · activity ${level}` : '');
+                    cell.onclick = () => { S.streak[k] = (S.streak[k] || 0) < 3 ? (S.streak[k] || 0) + 1 : 0; renderHeatmap(); renderStreakCal(); updateKPIs(); scheduleSave(); };
+                    col.appendChild(cell);
+                }
+                grid.appendChild(col);
+            }
+        }
+
+        function renderRmBreakdown() {
+            const wrap = document.getElementById('rm-breakdown'); if (!wrap) return;
+            const sections = [
+                { label: 'DSA Mastery', data: DSA_DATA, ns: 'dsa', color: '#b8f241' },
+                { label: 'SSC + Aptitude', data: [...SSC_QUANT, ...SSC_REASON, ...SSC_ENG, ...SSC_GK], ns: 'ssc', color: '#5b6ef5' },
+                { label: 'AI / ML Skills', data: [...AI_FOUND, ...AI_LLM, ...AI_MLOPS, ...AI_AGENT], ns: 'ai', color: '#f59e0b' },
+                { label: 'Java + Production', data: [...JAVA_CORE, ...JAVA_ADV, ...JAVA_SPRING, ...JAVA_PY, ...JAVA_SD], ns: 'java', color: '#2dd4bf' },
+            ];
+            wrap.innerHTML = sections.map(s => {
+                const total = s.data.reduce((a, b) => a + (b.topics?.length || 0), 0);
+                const done = s.data.reduce((a, b) => a + (b.topics || []).filter((_, i) => S.chipsDone[`${s.ns}-${b.title}-${i}`]).length, 0);
+                const pct = total ? Math.round(done / total * 100) : 0;
+                return `
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:0.88rem;font-weight:600;">${s.label}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:${s.color}">${done}/${total} · ${pct}%</div>
+        </div>
+        <div style="height:7px;background:var(--raise);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${s.color};border-radius:4px;transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1)"></div>
+        </div>
+      </div>
+    `;
+            }).join('');
+        }
+
+        /* ═══════════════════════════════════════════════════
+           CERTS
+        ═══════════════════════════════════════════════════ */
+        function renderCerts() {
+            const grid = document.getElementById('cert-grid'); if (!grid) return;
+            grid.innerHTML = '';
+            (S.certs || []).forEach((c, i) => {
+                const statusClass = { todo: 'cs-todo', inprog: 'cs-inprog', done: 'cs-done' }[c.status] || 'cs-todo';
+                const statusLabel = { todo: '📌 To Do', inprog: '⚡ In Progress', done: '✅ Done' }[c.status] || 'To Do';
+                const card = document.createElement('div');
+                card.className = 'cert-card';
+                card.innerHTML = `
+      <span class="cert-icon">${c.icon || '🏅'}</span>
+      <div class="cert-name">${escHtml(c.title)}</div>
+      <div class="cert-org">${escHtml(c.org)}</div>
+      <div class="cert-actions">
+        <button class="cert-status-btn ${statusClass}" onclick="cycleCertStatus(${i})">${statusLabel}</button>
+        <button class="btn btn-ghost btn-sm" onclick="delCert(${i})" style="padding:4px 8px;color:var(--ghost)">✕</button>
+      </div>
+    `;
+                grid.appendChild(card);
+            });
+        }
+
+        function cycleCertStatus(i) {
+            const cycle = ['todo', 'inprog', 'done'];
+            S.certs[i].status = cycle[(cycle.indexOf(S.certs[i].status || 'todo') + 1) % 3];
+            renderCerts(); scheduleSave();
+        }
+        function delCert(i) { S.certs.splice(i, 1); renderCerts(); scheduleSave(); }
+        function saveCert() {
+            const name = document.getElementById('m-cert-name').value.trim();
+            const org = document.getElementById('m-cert-org').value.trim();
+            const icon = document.getElementById('m-cert-icon').value.trim() || '🏅';
+            const status = document.getElementById('m-cert-status').value;
+            if (!name) return;
+            (S.certs = S.certs || []).push({ title: name, org, icon, status });
+            document.getElementById('m-cert-name').value = ''; document.getElementById('m-cert-org').value = '';
+            closeModal(document.getElementById('modal-cert-add'));
+            renderCerts(); scheduleSave();
+            showToast('Certification added! 🏆', '#f59e0b');
+        }
+
+        /* ═══════════════════════════════════════════════════
+           NOTES
+        ═══════════════════════════════════════════════════ */
+        const NOTE_COLS = ['#131a1f', '#161821', '#1a1615', '#141a14', '#1a1519'];
+        function renderNotes() {
+            const grid = document.getElementById('notes-grid'); if (!grid) return;
+            grid.innerHTML = '';
+            (S.notes || []).forEach((n, i) => {
+                const card = document.createElement('div');
+                card.className = 'note-card';
+                card.style.background = n.color || NOTE_COLS[0];
+                card.innerHTML = `
+      <button class="note-del" onclick="delNote(${i})">✕</button>
+      <textarea placeholder="Write anything…">${escHtml(n.text || '')}</textarea>
+      <div class="note-ts">${n.date || ''}</div>
+    `;
+                const ta = card.querySelector('textarea');
+                ta.oninput = () => { S.notes[i].text = ta.value; scheduleSave(); };
+                grid.appendChild(card);
+            });
+        }
+
+        function addNote() {
+            (S.notes = S.notes || []).unshift({ id: uid(), text: '', color: NOTE_COLS[Math.floor(Math.random() * NOTE_COLS.length)], date: new Date().toLocaleDateString('en-IN') });
+            renderNotes(); scheduleSave();
+        }
+        function delNote(i) { S.notes.splice(i, 1); renderNotes(); scheduleSave(); }
+
+        /* ═══════════════════════════════════════════════════
+           MODALS / TOAST
+        ═══════════════════════════════════════════════════ */
+        function openModal(id) { (typeof id === 'string' ? document.getElementById(id) : id)?.classList.add('open'); }
+        function closeModal(el) { el?.classList.remove('open'); }
+
+        let _toastT;
+        function showToast(msg, color = '#b8f241') {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-dot').style.background = color;
+            document.getElementById('toast-msg').textContent = msg;
+            t.classList.add('visible');
+            clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('visible'), 3200);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           UTILS
+        ═══════════════════════════════════════════════════ */
+        function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        const CAT_LABELS = { dsa: 'DSA', java: 'Java', ssc: 'SSC', ai: 'AI/ML', proj: 'Project', apt: 'Aptitude' };
+        const CAT_ICONS = { dsa: '◇', java: '◆', ssc: '◎', ai: '⬡', proj: '▦', apt: '⬟' };
+
+        function catBg(cat) {
+            return ({ dsa: 'background:rgba(184,242,65,0.1);color:#b8f241;border-color:rgba(184,242,65,0.25)', java: 'background:rgba(245,158,11,0.1);color:#f59e0b;border-color:rgba(245,158,11,0.25)', ssc: 'background:rgba(56,189,248,0.1);color:#38bdf8;border-color:rgba(56,189,248,0.25)', ai: 'background:rgba(45,212,191,0.1);color:#2dd4bf;border-color:rgba(45,212,191,0.25)', proj: 'background:rgba(251,113,133,0.1);color:#fb7185;border-color:rgba(251,113,133,0.25)', apt: 'background:rgba(91,110,245,0.1);color:#8b98fc;border-color:rgba(91,110,245,0.25)' }[cat] || 'background:var(--raise);color:var(--fog)');
+        }
+
+        /* ═══════════════════════════════════════════════════
+           DATA
+        ═══════════════════════════════════════════════════ */
+        const DSA_M1 = [
+            { tag: 'Week 1', title: 'Arrays & String Manipulation', desc: 'The absolute foundation. 90% of problems touch arrays. Master prefix sums, two pointers, in-place operations. Target: 30 LeetCode problems.', topics: ['Array Declaration & Memory', 'Multi-dimensional Arrays', 'String Builder vs String', 'Two Pointer (opposite ends)', 'Two Pointer (same direction)', 'Prefix Sum Array', 'Difference Array', 'Kadane\'s Algorithm (max subarray)', 'Dutch National Flag', 'Sorting + Binary Search combo', 'Sliding Window — Fixed', 'Sliding Window — Variable', 'In-place Reversal', 'Matrix Spiral Traversal', 'Matrix Rotation (90°)', 'Subarray Sum = K', 'Longest Substring no repeat', 'Valid Palindrome (two ptr)', 'Merge Sorted Arrays in-place', 'Find duplicates (Floyd cycle)'] },
+            { tag: 'Week 2', title: 'Hashing & Maps (Java HashMap)', desc: 'The O(1) lookup weapon. Frequency maps, grouping, intersection tricks. HashMap internals matter here.', topics: ['HashMap put/get/containsKey', 'HashSet for uniqueness', 'Frequency Map pattern', 'Two Sum (classic)', 'Two Sum — all pairs', 'Group Anagrams', 'Count subarrays (prefix+hashmap)', 'Longest consecutive sequence', 'Subarray with equal 0s & 1s', 'Top K frequent elements', 'Find all duplicates', 'Intersection of arrays', 'Longest subarray sum = K', 'Word frequency counter', 'First non-repeating char', 'Isomorphic strings', 'Character mapping checks', 'Count distinct in window', 'Circular subarray tricks', 'Consistent Hashing concept'] },
+            { tag: 'Week 3', title: 'Linked Lists — Full Mastery', desc: 'Pointer manipulation deep dive. Dummy nodes, cycle detection, reversal. Master every classic problem.', topics: ['SLL — create & traverse', 'DLL — forward/backward', 'Reverse linked list (iterative)', 'Reverse linked list (recursive)', 'Cycle detection — Floyd', 'Find cycle entry point', 'Find middle (slow/fast)', 'Remove Nth from end', 'Merge two sorted lists', 'Merge K sorted lists preview', 'Flatten multilevel DLL', 'Deep copy with random ptr', 'Add two numbers (LL)', 'Palindrome linked list', 'Remove duplicates (sorted)', 'Remove duplicates (unsorted)', 'Rotate list by K', 'Intersection of two LLs', 'Reorder list (L0→Ln→L1…)', 'LRU Cache with DLL+HashMap'] },
+            { tag: 'Week 4', title: 'Stacks & Queues — Pattern Focus', desc: 'Monotonic stack is a superpower. Mastering this unlocks 20+ problem types instantly.', topics: ['Stack using array', 'Stack using linked list', 'Queue using two stacks', 'Monotonic Increasing Stack', 'Monotonic Decreasing Stack', 'Next Greater Element I & II', 'Next Smaller Element', 'Largest Rectangle in Histogram', 'Trapping Rain Water', 'Evaluate Reverse Polish', 'Valid Parentheses all variants', 'Min Stack O(1)', 'Max Stack', 'Sliding Window Maximum (Deque)', 'Circular Queue', 'Priority Queue intro (Java)', 'Daily Temperatures', 'Remove K digits', 'Score of Parentheses', 'Exclusive Time of Functions'] },
+        ];
+
+        const DSA_M2 = [
+            { tag: 'Week 5', title: 'Binary Trees & BST', desc: '25% of interviews. Traversals, LCA, diameter, serialization. Master recursive & iterative both.', topics: ['Pre/In/Post order recursive', 'Pre/In/Post order iterative', 'Level Order BFS (by levels)', 'ZigZag Level Order', 'Height of tree', 'Diameter of tree', 'Check balanced BST', 'LCA of BST', 'LCA of Binary Tree', 'Path sum (root to leaf)', 'All root-to-leaf paths', 'Serialize & Deserialize BT', 'Flatten BT to linked list', 'Right side view', 'Cousins in BT', 'Symmetric tree check', 'Count nodes in complete BT', 'Delete node from BST', 'Validate BST (min/max)', 'Recover BST (2 swapped nodes)'] },
+            { tag: 'Week 6', title: 'Heaps & Priority Queue', desc: 'Top K problems, median stream, Kth largest. Java PriorityQueue is your best friend here.', topics: ['Max heap from scratch', 'Min heap from scratch', 'Java PriorityQueue API', 'Custom comparator (lambda)', 'K largest elements', 'K smallest elements', 'Kth largest in stream', 'Merge K sorted lists (heap)', 'Find median from stream', 'Reorganize string (freq heap)', 'Task Scheduler', 'Meeting Rooms II', 'Top K frequent words', 'Sort characters by freq', 'Minimum cost to connect ropes', 'Ugly number II', 'Find K pairs smallest sums', 'Furthest building you can reach', 'IPO problem', 'Hand of straights'] },
+            { tag: 'Week 7', title: 'Graphs — BFS & DFS Core', desc: 'Foundation of all graph problems. Adjacency list/matrix, connected components, topological sort.', topics: ['Graph representation (adj list)', 'Graph representation (adj matrix)', 'BFS traversal', 'DFS traversal', 'Detect cycle in undirected (BFS)', 'Detect cycle in directed (DFS)', 'Topological sort (DFS)', 'Topological sort (Kahn BFS)', 'Number of islands', 'Max area of island', 'Number of provinces', 'Clone graph', 'Course schedule I & II', 'Bipartite check', 'Word ladder BFS', 'Rotten oranges (multi-src BFS)', '01 Matrix BFS', 'Pacific Atlantic water flow', 'Surrounded regions', 'Walls and gates'] },
+            { tag: 'Week 8', title: 'Sorting Algorithms & Binary Search Mastery', desc: 'Binary search on answer space is underused and incredibly powerful. Master the template.', topics: ['Bubble sort (understand)', 'Selection sort (understand)', 'Insertion sort (understand)', 'Merge sort (implement)', 'Quick sort + partition', 'Counting sort', 'Radix sort concept', 'BS — exact search', 'BS — lower bound', 'BS — upper bound', 'BS on answer template', 'Search rotated sorted array', 'Find min in rotated array', 'Find peak element', 'Koko eating bananas', 'Capacity to ship packages', 'Aggressive cows / painters', 'Median of two sorted arrays', 'Find kth smallest in matrix', 'Search 2D matrix II'] },
+        ];
+
+        const DSA_M3 = [
+            { tag: 'Week 9', title: 'Dynamic Programming — 1D & 2D', desc: 'The make-or-break topic. Identify state, define transition, pick top-down or bottom-up. Master the patterns.', topics: ['Fibonacci (memoize → tabulate)', 'Climbing stairs', 'House robber I & II', 'Jump game I & II', 'Coin change (min coins)', 'Coin change II (ways)', 'Partition equal subset sum', 'Target sum', '0/1 Knapsack', 'Unbounded Knapsack', 'Longest Increasing Subsequence', 'LIS — binary search O(nlogn)', 'Russian dolls (2D LIS)', 'Longest Common Subsequence', 'Longest Common Substring', 'Edit Distance', 'Shortest Common Supersequence', 'Distinct subsequences', 'Interleaving strings', 'Regular expression matching'] },
+            { tag: 'Week 10', title: 'DP Advanced — Matrix, Interval, Strings', desc: '2D DP and interval DP complete your DP toolkit. These appear in harder rounds.', topics: ['Unique paths I & II', 'Minimum path sum', 'Maximal square', 'Maximal rectangle (stack+DP)', 'Triangle minimum path', 'Cherry pickup', 'Matrix chain multiplication', 'Burst balloons', 'Strange printer', 'Minimum cost to cut stick', 'Palindrome partitioning II', 'Palindromic substrings count', 'Longest palindromic subsequence', 'Scramble string', 'Word break I & II', 'Decode ways', 'Minimum insertions palindrome', 'Count palindromic subsequences', 'Buy & sell stock all 6 variants', 'Paint house I & II'] },
+            { tag: 'Week 11', title: 'Advanced Graphs — Dijkstra, MST, SCC', desc: 'Weighted graphs, shortest paths, spanning trees. Essential for backend and CP interviews.', topics: ['Dijkstra (min heap)', 'Dijkstra on grid', 'Bellman-Ford algorithm', 'Bellman-Ford negative cycle detect', 'Floyd-Warshall', 'Kruskal MST (DSU)', 'Prim MST (heap)', 'Bridges in graph (Tarjan)', 'Articulation points', 'Strongly connected components (Kosaraju)', 'SCC Tarjan', 'Euler path/circuit', 'Network flow concept', 'Alien dictionary (topo sort)', 'Sequence reconstruction', 'Minimum spanning tree problems', 'Path with minimum effort', 'Swim in rising water', 'Cheapest flights K stops', 'Number of ways to arrive destination'] },
+            { tag: 'Week 12', title: 'Tries, Segment Trees & Bit Manipulation', desc: 'Complete the toolkit. XOR tricks, autocomplete systems, range queries.', topics: ['Trie — insert & search', 'Trie — startsWith', 'Word search II (Trie+DFS)', 'Replace words (Trie)', 'Design search autocomplete', 'XOR — find single number', 'XOR — find two missing', 'Maximum XOR of two numbers (Trie)', 'Count pairs with given XOR', 'Subsets via bit masking', 'Check power of 2', 'Count set bits', 'Reverse bits', 'Hamming distance', 'Single number I, II, III', 'Bitwise AND of range', 'Segment tree — build', 'Segment tree — range query', 'Segment tree — update', 'Sparse table (RMQ)'] },
+        ];
+
+        const DSA_PATTERNS = [
+            { name: 'Two Pointers', desc: 'Left/right converge on sorted array. Also: fast/slow on linked lists for cycle detection. Sorted input is the key indicator.', diff: 'e' },
+            { name: 'Sliding Window', desc: 'Expand right, shrink left to maintain constraint. Fixed vs variable window. Key: what makes window invalid?', diff: 'e' },
+            { name: 'Prefix Sum + HashMap', desc: 'Store prefix sums in map. For subarray sum = K: find how many times (sum-K) appeared before.', diff: 'e' },
+            { name: 'Monotonic Stack', desc: 'Maintain strictly inc/dec stack. Next Greater/Smaller, histogram, rain water. Amortized O(n).', diff: 'm' },
+            { name: 'BFS on Grid / Multi-source', desc: 'All sources enqueued at start. Distance propagates outward. Rotten oranges, 01 matrix.', diff: 'e' },
+            { name: 'DFS + Backtracking', desc: 'Choose → recurse → undo. Permutations, subsets, combinations, word search. Mark visited, restore after.', diff: 'm' },
+            { name: 'Modified Binary Search', desc: 'BS on answer space. Define monotonic predicate. Ask "can I achieve X?" and binary search on X.', diff: 'm' },
+            { name: 'Top K (Heap)', desc: 'Min-heap size K for K-largest. Max-heap for K-smallest. QuickSelect O(n) average.', diff: 'm' },
+            { name: 'K-way Merge', desc: 'Min-heap with one element per list. O(N log K). Merge K sorted lists, K sorted arrays.', diff: 'm' },
+            { name: 'Two Heaps', desc: 'Max-heap for lower half, min-heap for upper half. Median maintenance. Rebalance to keep sizes ±1.', diff: 'h' },
+            { name: 'Union Find (DSU)', desc: 'Path compression + union by rank. Connected components, cycle detection, Kruskal MST.', diff: 'm' },
+            { name: 'Topological Sort', desc: 'Kahn\'s (in-degree BFS) or DFS+stack. Directed acyclic graphs. Detect cycles = course schedule.', diff: 'm' },
+            { name: '0/1 Knapsack DP Template', desc: 'dp[i][w] = max value using i items, weight w. Choose or skip. Subsets, partition, target sum.', diff: 'm' },
+            { name: 'LCS / Edit Distance DP', desc: 'dp[i][j] based on last characters equal or not. LCS, LIS, edit distance, shortest supersequence.', diff: 'h' },
+            { name: 'Trie for Prefix Problems', desc: 'Word insert/search in O(L). Autocomplete, XOR-max, replace words. 26 children per node.', diff: 'm' },
+            { name: 'Interval Merge/Scheduling', desc: 'Sort by start. If curr.start ≤ prev.end → overlap. Greedy: take earliest ending first for max non-overlap.', diff: 'm' },
+            { name: 'Bitmask DP', desc: 'State = set of used items (bitmask). dp[mask][i]. TSP, minimum path covering all nodes.', diff: 'h' },
+            { name: 'Matrix DP (Paths)', desc: 'dp[i][j] = f(dp[i-1][j], dp[i][j-1]). Unique paths, min path sum, maximal square.', diff: 'm' },
+            { name: 'Cyclic Sort', desc: 'Numbers in range [1,N]. Place each number at index (num-1). O(n) time. Find missing/duplicate.', diff: 'e' },
+            { name: 'Fast/Slow Pointers', desc: 'Floyd\'s cycle detection. Slow moves 1 step, fast moves 2. Meet point helps find cycle entry.', diff: 'e' },
+        ];
+
+        const JAVA_CORE = [
+            { tag: 'OOP Mastery', title: 'Object-Oriented Programming Deep Dive', desc: 'Not just syntax — deep understanding of design principles. These are asked in every SDE interview.', topics: ['Encapsulation — private fields + getters/setters', 'Inheritance — extends, super keyword, constructor chaining', 'Polymorphism — method overriding vs overloading', 'Abstraction — abstract class vs interface', 'Interface default & static methods (Java 8+)', 'Functional interfaces (@FunctionalInterface)', 'Sealed classes and interfaces (Java 17+)', 'Inner classes — static, inner, anonymous, local', 'Enum with methods & fields', 'Design: SOLID principles application'] },
+            { tag: 'Collections', title: 'Java Collections Framework', desc: 'Know the internal workings, not just the API. When to use which structure and why.', topics: ['ArrayList — dynamic array, amortized O(1)', 'LinkedList — DLL, ListIterator', 'HashMap — load factor, rehashing, chaining', 'LinkedHashMap — insertion order', 'TreeMap — Red-Black tree, NavigableMap', 'HashSet / LinkedHashSet / TreeSet', 'ArrayDeque for stack and queue', 'PriorityQueue — min/max heap, custom comparator', 'Collections utility class methods', 'Fail-fast vs Fail-safe iterators'] },
+            { tag: 'Generics', title: 'Generics & Type System', desc: 'Write reusable, type-safe code. Wildcards and bounded types are often misunderstood.', topics: ['Generic classes and methods', 'Upper bounded wildcards (? extends T)', 'Lower bounded wildcards (? super T)', 'Unbounded wildcard (<?>)', 'Type erasure and implications', 'Generic methods in static context', 'Comparable<T> vs Comparator<T>', 'Covariance and contravariance', 'Raw types and legacy code', 'Reifiable vs non-reifiable types'] },
+        ];
+        const JAVA_ADV = [
+            { tag: 'Concurrency', title: 'Multithreading & Concurrency', desc: 'Critical for backend engineering. Understand the Java memory model deeply.', topics: ['Thread lifecycle states', 'synchronized keyword — method & block', 'ReentrantLock vs synchronized', 'volatile keyword — visibility guarantee', 'Atomic classes (AtomicInteger etc.)', 'Executor framework — ExecutorService', 'ThreadPoolExecutor — core/max pool size', 'CompletableFuture — async chaining', 'CountDownLatch & CyclicBarrier', 'Java Memory Model (happens-before)', 'Deadlock detection & prevention', 'Thread starvation and livelock', 'BlockingQueue for producer-consumer', 'Fork/Join framework', 'Virtual threads (Java 21 Project Loom)'] },
+            { tag: 'Modern Java', title: 'Java 8 → 21 Modern Features', desc: 'Lambda, streams, records, pattern matching. Modern Java is a different language.', topics: ['Lambda expressions syntax', 'Method references (4 types)', 'Stream API — intermediate ops', 'Stream API — terminal ops', 'Optional<T> — correct usage', 'Collectors.groupingBy/partitioningBy', 'flatMap vs map', 'Stream.reduce', 'Records (immutable data carriers)', 'Pattern matching instanceof', 'Switch expressions (Java 14+)', 'Text blocks (Java 13+)', 'Sealed classes hierarchy', 'Virtual threads vs platform threads', 'Structured concurrency (Java 21)'] },
+        ];
+        const JAVA_SPRING = [
+            { tag: 'Spring Core', title: 'Spring Boot & REST APIs', desc: 'The industry standard for Java backend. IoC container, DI, JPA, security.', topics: ['IoC Container — BeanFactory vs ApplicationContext', 'Dependency Injection — constructor/field/setter', '@Component @Service @Repository @Controller', 'Spring Boot auto-configuration', 'application.properties / yml', 'Profiles (@Profile, --spring.profiles.active)', 'Spring Data JPA — Entity, Repository', '@Transactional — propagation, isolation', 'JPQL and native queries', '@RestController and HTTP methods', '@RequestBody @PathVariable @RequestParam', 'Exception handling @ControllerAdvice', 'Spring Security — JWT filter chain', 'Method-level security (@PreAuthorize)', 'Actuator — health, metrics, info'] },
+        ];
+        const JAVA_PY = [
+            { tag: 'Python ML', title: 'Python for ML & Fast Prototyping', desc: 'Python is your prototyping layer — fast iteration, rich libraries, production via FastAPI/Docker.', topics: ['NumPy vectorization — broadcasting', 'Pandas — groupby, pivot_table, merge', 'Matplotlib/Seaborn — publication plots', 'Scikit-learn — Pipeline, GridSearchCV', 'PyTorch — autograd, nn.Module', 'Dataset & DataLoader', 'Training loop with checkpointing', 'FastAPI — async endpoints, Pydantic', 'Async Python (asyncio, await)', 'Docker containerize ML app', 'Jupyter to .py conversion', 'Profiling with cProfile/line_profiler', 'Logging in production Python', 'Click/Typer for CLI tools', 'Testing with pytest + fixtures'] },
+        ];
+        const JAVA_SD = [
+            { tag: 'System Design', title: 'System Design Fundamentals', desc: 'Essential for SDE-2+ interviews. Design scalable, fault-tolerant distributed systems.', topics: ['CAP Theorem — trade-offs', 'Horizontal vs Vertical scaling', 'SQL vs NoSQL — when to use', 'Sharding strategies (range, hash, directory)', 'Replication — master-slave, master-master', 'Database indexing — B-tree, composite', 'Caching — Redis, eviction policies', 'CDN — edge caching, cache invalidation', 'Message queues — Kafka internals', 'Load balancing — round robin, consistent hash', 'Rate limiting — token bucket, sliding window', 'API Gateway pattern', 'Service mesh — sidecar proxy', 'Circuit breaker pattern', 'Consistent hashing for distributed cache'] },
+            { tag: 'Design Practice', title: '10 Classic System Designs', desc: 'End-to-end practice. For each: requirements → scale estimates → data model → API → deep dive.', topics: ['URL Shortener (TinyURL)', 'WhatsApp / Chat System', 'Instagram / Twitter Feed', 'Uber/Ola Ride Sharing', 'Search Autocomplete System', 'Rate Limiter Service', 'Distributed File Storage (S3)', 'Notification System', 'ML Feature Store', 'Real-time Collaborative Editor'] },
+        ];
+
+        const SSC_QUANT = [
+            { tag: 'Number System', title: 'Number System & Arithmetic', desc: 'High ROI. Fast calculation tricks save 30 seconds per question — crucial in timed SSC exams.', topics: ['Divisibility rules (2,3,4,5,6,7,8,9,11)', 'HCF — Euclidean algorithm', 'LCM — prime factorization method', 'Fractions — comparison, operations', 'BODMAS — order of operations', 'Simplification tricks', 'Unit digit pattern (cyclicity)', 'Remainder theorem (Fermat, Chinese)', 'Modular arithmetic basics', 'Number of zeros in n! (Legendre)', 'Square roots estimation', 'Cube roots estimation', 'Sum of series (AP, GP)', 'Digits — sum, count, reversal tricks', 'Vedic math: multiplication shortcuts'] },
+            { tag: 'Percentage & Ratio', title: 'Percentage, Profit & Ratio', desc: '30% of SSC quant. Understand conceptually — never memorize formulas blindly.', topics: ['Percentage — base change trick', 'Percentage increase/decrease chain', 'Successive % changes formula', 'Profit and Loss — CP/SP/MP', 'Discount — chain discount', 'Marked price problems', 'Partnership — ratio of time & investment', 'Ratio and Proportion — componendo', 'Variation — direct, inverse, joint', 'Mixture and Alligation rule', 'Mean mixture concept', 'Replacement problems', 'Average — weighted average', 'Simple Interest — formula & tricks', 'Compound Interest — SI vs CI difference'] },
+            { tag: 'Speed & Work', title: 'Time-Speed-Distance & Work', desc: 'Draw the triangle. Understand relative speed. Work problems are always rate-based.', topics: ['Speed — distance — time triangle', 'Relative speed (same/opposite direction)', 'Trains — platform, crossing problems', 'Boats — upstream/downstream', 'Circular track meeting problems', 'Time & Work — 1/A + 1/B = 1/T', 'Alternate day work patterns', 'Work efficiency variation', 'Pipes and Cisterns', 'MDH (Man-Days-Hours) concept', 'Work and wages', 'Escalator problems', 'Clock — hands speed', 'Clock — angle formula', 'Calendar — odd days method'] },
+            { tag: 'Geometry', title: 'Geometry & Mensuration', desc: 'Triangles, circles, and 3D shapes. SSC Tier II needs strong geometry. Draw every problem.', topics: ['Lines and angles — properties', 'Triangle — congruence criteria', 'Triangle — similarity criteria', 'Basic Proportionality Theorem', 'Pythagorean triples', 'Triangle area methods (Heron\'s)', 'Circle — chords, arcs, sectors', 'Tangent — properties, length', 'Cyclic quadrilateral properties', 'Area — all 2D shapes', 'Perimeter — all 2D shapes', 'Volume — cube, cuboid, cylinder', 'Volume — cone, sphere, hemisphere', 'Surface area — all 3D shapes', 'Coordinate geometry — distance, midpoint'] },
+        ];
+        const SSC_REASON = [
+            { tag: 'Verbal Reasoning', title: 'Verbal & Logical Reasoning', desc: 'Classification, series, analogy, coding. Master these for guaranteed marks.', topics: ['Number series — identify rule', 'Letter series — position pattern', 'Alpha-numeric mixed series', 'Analogy — number based', 'Analogy — letter based', 'Analogy — word meaning based', 'Classification — odd one out', 'Coding-Decoding — letter shift', 'Coding-Decoding — number based', 'Coding in fictional language', 'Blood relations — family tree', 'Blood relations — coded', 'Direction and distance', 'Ranking — linear', 'Ordering — arrange in sequence'] },
+            { tag: 'Logical', title: 'Seating & Puzzle Arrangements', desc: 'These are 10+ marks in SSC Tier II. Practice until you can solve in under 5 minutes.', topics: ['Linear seating (facing same dir)', 'Linear seating (facing each other)', 'Circular seating (same dir)', 'Circular seating (facing center/outside)', 'Square/Rectangular arrangement', 'Floor-based puzzles', 'Box-based puzzles', 'Scheduling puzzles', 'Comparison-based (tallest/shortest)', 'Age-based puzzles'] },
+            { tag: 'Non-Verbal', title: 'Non-Verbal Reasoning', desc: 'Pattern recognition. Figure-based. Can\'t memorize — need visual intuition.', topics: ['Mirror image (vertical axis)', 'Mirror image (horizontal axis)', 'Water image', 'Paper folding & cutting', 'Dice — opposite faces', 'Dice — unfolded net', 'Figure matrix — identify pattern', 'Counting figures (triangles, squares)', 'Embedded figures', 'Completion of figure', 'Series — figure based', 'Venn diagram — relationship', 'Cubes — painted and cut', 'Paper folding — punch holes', 'Visual analogy'] },
+        ];
+        const SSC_ENG = [
+            { tag: 'Grammar', title: 'English Grammar — Error Spotting', desc: 'Learn rules, spot errors. Error spotting and sentence improvement are high-scoring.', topics: ['Parts of speech — 8 types', 'Noun — countable/uncountable, collective', 'Pronoun — agreement rules', 'Verb — transitive/intransitive', 'Tense chart — 12 tenses', 'Subject-Verb agreement — 15 rules', 'Active to Passive voice conversion', 'Direct to Indirect speech rules', 'Articles — a, an, the — 20 rules', 'Prepositions — common usage'] },
+            { tag: 'Vocabulary', title: 'Vocabulary & Reading Comprehension', desc: 'Build root-word knowledge. RC passages are 10-15 marks in SSC CGL Tier II.', topics: ['Synonyms — 500 word list', 'Antonyms — 500 word list', 'One-word substitution — 300 list', 'Idioms and phrases — 200 list', 'Spelling correction patterns', 'Sentence rearrangement (PQRS)', 'Cloze test strategy', 'Para jumbles', 'Fill in the blanks — grammar based', 'Reading Comprehension strategy'] },
+        ];
+        const SSC_GK = [
+            { tag: 'Polity', title: 'Indian Polity & Governance', desc: 'Constitution, Parliament, Judiciary. 20-25 marks in every SSC exam.', topics: ['Preamble — keywords & meaning', 'Fundamental Rights (Articles 12-35)', 'Directive Principles (36-51)', 'Fundamental Duties (51A)', 'President — powers, election', 'Prime Minister & Council of Ministers', 'Parliament — Lok Sabha, Rajya Sabha', 'Legislative process — bills', 'Judiciary — Supreme Court, HC', 'Constitutional amendments — key ones', 'Emergency provisions (352,356,360)', 'Schedules — all 12', 'Important Articles to remember', 'Election Commission of India', 'Constitutional bodies vs statutory bodies'] },
+            { tag: 'History', title: 'Indian History', desc: 'Ancient, Medieval, Modern. SSC focuses on Modern history (British era) most.', topics: ['Indus Valley Civilization', 'Vedic period — Rigvedic society', 'Mauryan Empire — Ashoka', 'Gupta Empire — Golden Age', 'Medieval India — Delhi Sultanate', 'Mughal Empire — Akbar to Aurangzeb', 'Bhakti & Sufi movement', 'British arrival — trading companies', '1857 uprising — causes & results', 'Indian National Congress — formation', 'Gandhi — major movements', 'Partition & Independence', 'Important battles (Panipat, Plassey, Buxar)', 'Constitutional development (1858-1947)', 'Tribal & Peasant movements'] },
+            { tag: 'Science', title: 'Science — Physics, Chemistry, Biology', desc: 'Static GK science. Focus on NCERT 6-10 concepts — SSC loves application questions.', topics: ['Laws of Motion — Newton', 'Laws of Thermodynamics (basics)', 'Electricity — Ohm\'s law, circuits', 'Light — reflection, refraction, lenses', 'Sound — waves, resonance', 'Periodic table — groups & periods', 'Chemical bonding basics', 'Acids, Bases, Salts', 'Important chemical reactions', 'Carbon compounds (organic basics)', 'Cell structure & function', 'Human body systems (digestive, respiratory)', 'Genetics — Mendel\'s laws', 'Nutrition — vitamins, diseases', 'Ecology — food chain, biodiversity'] },
+        ];
+
+        const APTITUDE_PATTERNS = [
+            { name: 'Speed–Distance–Time Triangle', desc: 'Draw SD=T. Relative speed: same direction → subtract; opposite → add. Train problems: length of train ÷ relative speed = crossing time.', diff: 'e' },
+            { name: 'Work Rate: 1/A + 1/B = 1/T', desc: 'Rate of work = 1/time. Combine rates linearly. Alternate day: check if they work together on the last day or separately.', diff: 'e' },
+            { name: 'Percentage Change Chain', desc: 'For successive changes: multiply (1±r₁)(1±r₂)... Never add percentages. Net effect on 100 base.', diff: 'e' },
+            { name: 'Mixture Alligation Cross Method', desc: 'Draw X diagram. (c2-cm)/(cm-c1) = q1/q2. Works for price mixtures, speed averages, percentage mixtures.', diff: 'm' },
+            { name: 'Partnership Time-Investment Product', desc: 'Profit ratio = (P₁×T₁):(P₂×T₂). Sleeping vs working partner gets salary first, then ratio split.', diff: 'm' },
+            { name: 'Circular Arrangements: (n-1)!', desc: 'Fix one person. Arrange rest in (n-1)! ways. Necklace (identical clockwise/anticlockwise): (n-1)!/2.', diff: 'm' },
+            { name: 'Clock Angle Formula', desc: 'Angle = |30H − 5.5M|. At 12H M=0: angle=0. Both hands overlap: solve 30H = 5.5M → M = 60H/11.', diff: 'e' },
+            { name: 'Calendar Odd Days Method', desc: 'Ordinary year = 1 odd day. Leap year = 2. 100 yrs = 5 odd days. 400 yrs = 0 odd days. Sum odd days → find day.', diff: 'm' },
+            { name: 'Probability: P(A∪B) = P(A)+P(B)−P(A∩B)', desc: 'Mutually exclusive: P(A∪B)=P(A)+P(B). Conditional: P(A|B)=P(A∩B)/P(B). Complement: P(A\')=1−P(A).', diff: 'm' },
+            { name: 'Number Series: Check differences', desc: 'Check 1st diff → 2nd diff → ratio → square/cube pattern. If none, try prime/composite or fibonacci-like.', diff: 'e' },
+            { name: 'Direction: Resultant by Pythagoras', desc: 'Track net N/S displacement and net E/W displacement separately. Resultant = √(N²+E²). Angle from compass.', diff: 'e' },
+            { name: 'Venn: Only A = A − (A∩B) − (A∩C) + (A∩B∩C)', desc: 'Exactly one = sum(only A+only B+only C). At least two = sum(two-way intersections) − 2×(all three). Use inclusion-exclusion.', diff: 'm' },
+        ];
+
+        const AI_FOUND = [
+            { tag: 'ML Core', title: 'Classical Machine Learning', desc: 'The foundation every ML engineer needs. Understand what\'s happening inside models — don\'t just import sklearn.', topics: ['Linear Regression — closed form & gradient descent', 'Logistic Regression — sigmoid, log loss', 'Decision Tree — entropy, Gini, pruning', 'Random Forest — bagging, feature importance', 'Gradient Boosting — XGBoost, LightGBM, CatBoost', 'SVM — kernel trick, margin maximization', 'K-Means & DBSCAN clustering', 'PCA — eigenvectors, explained variance', 'Bias-Variance tradeoff visualization', 'Cross-validation — k-fold, stratified', 'Evaluation — precision, recall, F1, AUC-ROC', 'Feature Engineering techniques', 'Feature selection — filter, wrapper, embedded', 'Hyperparameter tuning — GridSearch, RandomSearch, Optuna', 'Data imbalance — SMOTE, class weights'] },
+            { tag: 'Deep Learning', title: 'Neural Networks — Architecture to Training', desc: 'Backprop math, CNN, RNN, Transformer. Build from scratch in PyTorch.', topics: ['Forward pass & backprop math', 'Activation functions — ReLU, GELU, Swish', 'Weight initialization — Xavier, He', 'Batch Normalization — training vs inference', 'Layer Normalization', 'Dropout — training vs test mode', 'Adam, AdamW, SGD with momentum', 'Learning rate schedulers (cosine, warmup)', 'CNN — Conv2D, stride, padding, receptive field', 'Pooling — max, avg, global avg', 'ResNet — skip connections (your ConvNeXt knowledge)', 'LSTM — cell state, gates (your strength)', 'GRU vs LSTM trade-offs', 'Attention mechanism — scaled dot product', 'Positional encoding'] },
+        ];
+        const AI_LLM = [
+            { tag: 'LLMs 2025', title: 'Large Language Models — Theory to Practice', desc: 'The most important AI skill of 2025. Understand, prompt, fine-tune, and deploy LLMs.', topics: ['Transformer architecture (Vaswani et al.)', 'Multi-head self-attention', 'Key, Query, Value matrices', 'Positional encoding — absolute vs RoPE', 'GPT architecture vs BERT architecture', 'Tokenization — BPE, SentencePiece, tiktoken', 'Pre-training vs fine-tuning', 'Full fine-tuning vs LoRA vs QLoRA', 'RLHF — reward model, PPO', 'DPO — direct preference optimization', 'Prompt engineering — zero/few-shot, CoT, ToT', 'System prompts and instruction following', 'RAG — Retrieval Augmented Generation', 'RAG pipeline — chunking, embedding, retrieval', 'LangChain & LlamaIndex architecture'] },
+            { tag: 'Multimodal', title: 'Vision-Language & Multimodal AI', desc: 'CLIP, ViT, GPT-4V, Stable Diffusion. The boundary between modalities is dissolving.', topics: ['CLIP — contrastive learning, image-text pairs', 'ViT — patch embeddings, class token', 'DALL-E 3 architecture overview', 'Stable Diffusion — latent diffusion model', 'U-Net in diffusion models', 'Guidance — CFG (classifier-free guidance)', 'Whisper — encoder-decoder ASR', 'TTS systems — Kokoro, XTTS', 'Grounding DINO — open-set detection', 'Florence-2 — unified vision model', 'GPT-4V / Gemini Vision capabilities', 'LLaVA architecture', 'PaliGemma overview', 'Video understanding basics (VideoLLM)', 'Multimodal RAG systems'] },
+        ];
+        const AI_MLOPS = [
+            { tag: 'MLOps', title: 'ML in Production — Deployment & Monitoring', desc: 'Your models deserve production infrastructure. This is what separates ML engineers from ML researchers.', topics: ['Docker for ML — Dockerfile, multi-stage', 'Docker Compose for ML services', 'FastAPI — async ML serving endpoint', 'Triton Inference Server overview', 'Model optimization — ONNX export', 'Quantization — INT8, FP16, GPTQ, AWQ', 'TorchScript & TorchServe', 'MLflow — experiment tracking, model registry', 'DVC — data & model version control', 'GitHub Actions CI/CD for ML', 'Evidently AI — data drift detection', 'Grafana + Prometheus for monitoring', 'Feature stores — Feast, Hopsworks', 'A/B testing for ML models', 'Load testing ML APIs (Locust)'] },
+            { tag: 'Cloud', title: 'Cloud ML Platforms', desc: 'AWS/GCP ecosystem for ML. Know where to run what.', topics: ['AWS SageMaker — training, endpoints', 'GCP Vertex AI — pipelines, model garden', 'HuggingFace Hub — model cards, spaces', 'Weights & Biases — run tracking, sweeps', 'Lambda (AWS) for serverless inference', 'S3 / GCS — data storage best practices', 'Supabase + pgvector for vector storage', 'Pinecone / Qdrant — vector databases', 'Redis for caching embeddings', 'Cloudflare Workers AI', 'Replicate for model hosting', 'Runpod / vast.ai for GPU rental', 'Cost optimization strategies', 'SageMaker Batch Transform', 'GCP Batch for large inference jobs'] },
+        ];
+        const AI_AGENT = [
+            { tag: 'Agentic AI', title: 'AI Agents — 2025\'s Core Skill', desc: 'Build agents that plan, use tools, call APIs, and complete multi-step tasks autonomously.', topics: ['ReAct pattern — Reason+Act loop', 'Tool use / function calling (OpenAI spec)', 'Tool use in LangChain', 'LangGraph — stateful agent graphs', 'AutoGen multi-agent framework', 'CrewAI — role-based agents', 'Memory systems — short-term (context), long-term (vector)', 'Episodic vs semantic memory', 'Retrieval from long-term memory', 'Web browsing agents', 'Code interpreter agents', 'Planning agents — task decomposition', 'Multi-agent orchestration patterns', 'Agent evaluation frameworks', 'Guardrails and safety for agents'] },
+            { tag: 'Your Projects', title: 'Apply AI to Your Own Projects', desc: 'Direct application of everything above to your LIS BCI, HSN Analytics, and Plant Detection work.', topics: ['DistilBERT for intent classification (BCI)', 'LSTM forecasting (HSN trade — your DPIIT work)', 'ConvNeXt optimization for plant detection', 'EEG signal preprocessing pipeline', 'Fatigue detection from EMG signals', 'NLP task extraction from raw text', 'Named Entity Recognition (NER)', 'Multi-class text classification', 'Time series forecasting — Prophet vs ARIMA vs LSTM', 'Sensor fusion for BCI system', 'VibezLang — custom language design (your project)', 'Brain-to-Text transformer pipeline', 'Model deployment for your Flask apps', 'Supabase integration with ML backend', 'Production ML with your Python+Java stack'] },
+        ];
+
+        const CERTS_DEFAULT = [
+            { title: 'Google Data Analytics Professional', org: 'Google / Coursera', icon: '📊', status: 'inprog' },
+            { title: 'TensorFlow Developer Certificate', org: 'Google', icon: '🧠', status: 'todo' },
+            { title: 'AWS Certified ML — Specialty', org: 'Amazon Web Services', icon: '☁️', status: 'todo' },
+            { title: 'Oracle Java SE 17 Programmer', org: 'Oracle', icon: '☕', status: 'todo' },
+            { title: 'Deep Learning Specialization (5 courses)', org: 'Andrew Ng · DeepLearning.AI', icon: '🤖', status: 'inprog' },
+            { title: 'LangChain for LLM Applications', org: 'DeepLearning.AI', icon: '🔗', status: 'todo' },
+            { title: 'HuggingFace NLP Course', org: 'HuggingFace', icon: '🤗', status: 'todo' },
+            { title: 'Spring Boot Microservices Master', org: 'Udemy / Chad Darby', icon: '🌱', status: 'todo' },
+            { title: 'MLOps Specialization', org: 'Duke University · Coursera', icon: '⚙️', status: 'todo' },
+            { title: 'Docker & Kubernetes Fundamentals', org: 'KodeKloud', icon: '🐳', status: 'todo' },
+            { title: 'GCP Professional ML Engineer', org: 'Google Cloud', icon: '🌩', status: 'todo' },
+            { title: 'SSC CGL Tier I + II Full Prep', org: 'Self-Study · Testbook/Adda247', icon: '📝', status: 'inprog' },
+        ];
+
+        const DSA_DATA = [...DSA_M1, ...DSA_M2, ...DSA_M3];
+
+        const SEED_TASKS = [
+            { text: 'Solve 5 LeetCode problems — Arrays (Two Pointer)', cat: 'dsa' },
+            { text: 'Study 1 DSA pattern: Sliding Window template', cat: 'dsa' },
+            { text: 'Java: Implement HashMap from scratch', cat: 'java' },
+            { text: 'SSC Quant: 20 questions — Percentage & Profit/Loss', cat: 'ssc' },
+            { text: 'Reasoning: 15 questions — Number Series', cat: 'apt' },
+            { text: 'Read 1 AI paper or blog (Arxiv/Medium)', cat: 'ai' },
+            { text: 'Work on LIS BCI project — EEG pipeline', cat: 'proj' },
+            { text: 'HSN Trade Analytics — time series forecasting', cat: 'proj' },
+            { text: 'Spaced rep: Review yesterday\'s DSA problems', cat: 'dsa' },
+            { text: 'Java: Concurrency — CompletableFuture practice', cat: 'java' },
+            { text: 'LeetCode Medium — Dynamic Programming (1 problem)', cat: 'dsa' },
+            { text: 'SSC English: 10 synonyms + 1 RC passage', cat: 'ssc' },
+            { text: 'Study Transformer self-attention internals', cat: 'ai' },
+            { text: 'Push all code to GitHub & write commit messages', cat: 'proj' },
+            { text: 'Mock test: 25 questions SSC timed (25 min)', cat: 'ssc' },
+        ];
+    </script>
+</body>
+
+</html>
