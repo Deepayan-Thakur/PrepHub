@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeepayanOS · Career HQ</title>
+    <title>PrepHub · Career HQ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -2290,7 +2290,7 @@
                 <button class="btn-main" onclick="doLogin()">Connect & Launch →</button>
                 <div id="auth-err"></div>
                 <div class="auth-hint">
-                    <a href="https://github.com/settings/tokens/new?scopes=gist&description=DeepayanOS"
+                    <a href="https://github.com/settings/tokens/new?scopes=gist&description=PrepHub"
                         target="_blank">Create token</a> — needs only <strong>gist</strong> scope · Data is stored in a
                     private Gist
                 </div>
@@ -2823,7 +2823,7 @@
                 if (S.bankTasks.length === 0) S.bankTasks = SEED_TASKS.map(t => ({ ...t, id: uid() }));
                 const r = await ghFetch('https://api.github.com/gists', TOKEN, {
                     method: 'POST',
-                    body: JSON.stringify({ description: 'DeepayanOS Career Data', public: false, files: { [GIST_FILE]: { content: JSON.stringify(S, null, 2) } } })
+                    body: JSON.stringify({ description: 'PrepHub Career Data', public: false, files: { [GIST_FILE]: { content: JSON.stringify(S, null, 2) } } })
                 });
                 GIST_ID = r.id;
             }
